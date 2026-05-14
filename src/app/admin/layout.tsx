@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { LayoutDashboard, BookOpen, Radio, Wrench, BookText, FolderKanban, LogOut, Moon, Sun } from "lucide-react";
+import { LayoutDashboard, BookOpen, Radio, Wrench, BookText, FolderKanban, LogOut, Moon, Sun, CreditCard, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,9 +11,8 @@ const ADMIN_NAV = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
   { icon: BookOpen, label: "Cursos", href: "/admin/courses" },
   { icon: Radio, label: "Lives", href: "/admin/lives" },
-  { icon: Wrench, label: "Herramientas", href: "/admin/tools" },
-  { icon: BookText, label: "Lecturas", href: "/admin/readings" },
-  { icon: FolderKanban, label: "Proyectos", href: "/admin/projects" },
+  { icon: CreditCard, label: "Planes", href: "/admin/plans" },
+  { icon: Settings2, label: "Config.", href: "/admin/settings" },
 ] as const;
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
