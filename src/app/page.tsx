@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -10,57 +11,73 @@ import { PathCard } from "@/components/learning-path/path-card";
 import { RankCard } from "@/components/ranking/rank-card";
 import { StatsBar } from "@/components/community/stats-bar";
 import { ProgressBar } from "@/components/shared/progress-bar";
-import { Bell, Play, Plus } from "lucide-react";
+import { Bell, Play, Plus, BookOpen, Wrench, Radio, TrendingUp } from "lucide-react";
 
-const RECENT_VIDEOS = [
-  { title: "Don Pedro Cap. 1", instructor: "Don Pedro", duration: "1h 24m", timeAgo: "Hace 2 días" },
-  { title: "Lucía - Crédito", instructor: "Lucía", duration: "1h 47m", timeAgo: "Sem. pas." },
-  { title: "Comunidad Q&A Mar", instructor: "Equipo", duration: "58 min", timeAgo: "Hace 1 mes" },
-  { title: "Manuel - Pitch", instructor: "Manuel", duration: "1h 12m", timeAgo: "Hace 4 días" },
-  { title: "Tatiana - Detect.", instructor: "Tatiana", duration: "1h 08m", timeAgo: "Hace 6 días" },
-  { title: "Carlos - Recetas", instructor: "Carlos", duration: "1h 31m", timeAgo: "Hace 8 días" },
-] as const;
+function formatDuration(min: number): string {
+  if (!min) return "—";
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m} min`;
+}
 
-const COURSES = [
-  { title: "EL SECRETO...", subtitle: "Aprende a prestar sin riesgo", instructor: "Don Pedro" },
-  { title: "RECETAS", subtitle: "Finanzas para tu emprendimiento", instructor: "Carlos" },
-  { title: "COSER TU FUTUR...", subtitle: "Vende lo que haces", instructor: "Lucía" },
-  { title: "TALLER", subtitle: "Tu primer crédito formal", instructor: "Manuel" },
-  { title: "SALÓN PRO", subtitle: "Servicios profesionales", instructor: "Tatiana" },
-  { title: "RECICLA", subtitle: "Economía circular", instructor: "Juvenal" },
-] as const;
+function timeAgo(date: string): string {
+  const diff = Date.now() - new Date(date).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days === 0) return "Hoy";
+  if (days === 1) return "Ayer";
+  if (days < 7) return `Hace ${days} días`;
+  return `Hace ${Math.floor(days / 7)} sem.`;
+}
 
-const TOOLS = [
-  { icon: Bell, title: "Calculadora", subtitle: "Simula tu préstamo en 3 pasos", color: "amber", label: "WIZARD 3P" },
-  { icon: Bell, title: "Formato", subtitle: "Plantilla para tu plan de negocio", color: "morado", label: "WIZARD 7P" },
-  { icon: Bell, title: "Metas", subtitle: "Define tu objetivo financiero en 5 min", color: "coral", label: "RUTA 5MIN" },
-  { icon: Bell, title: "Quiz", subtitle: "¿Qué tan financiero eres?", color: "cyan", label: "QUIZ 2MIN" },
-  { icon: Bell, title: "Ruta", subtitle: "Plan personalizado de ahorro", color: "teal", label: "RUTA 8CAP" },
-  { icon: Bell, title: "Interés Comp.", subtitle: "Interés compuesto fácil", color: "orange", label: "CALC 1MIN" },
-] as const;
+function getToolIcon(name: string) {
+  const icons: Record<string, any> = {
+    Calculator: "🧮",
+    FileText: "📝",
+    Target: "🎯",
+    Brain: "🧠",
+    Route: "🛤️",
+    Hash: "🔢",
+  };
+  return icons[name] ?? "🔧";
+}
 
-const LIVES = [
-  { when: "EN 6 HRS", instructor: "Don Pedro", title: "Cómo prestar sin que te coman vivo", subtitle: "Don Pedro · 90 min", duration: "90 min" },
-  { when: "VIE 9PM", instructor: "Carlos", title: "Caja registradora: control total", subtitle: "Carlos · 75 min", duration: "75 min" },
-  { when: "SAB 7PM", instructor: "Lucía", title: "Coser y vender: tu marca propia", subtitle: "Lucía · 60 min", duration: "60 min" },
-  { when: "LUN 8PM", instructor: "Manuel", title: "Tu primer crédito formal", subtitle: "Manuel · 80 min", duration: "80 min" },
-] as const;
+const toolColors = ["amber", "morado", "coral", "cyan", "teal", "orange"];
+const toolLabels = ["WIZARD 3P", "WIZARD 7P", "RUTA 5MIN", "QUIZ 2MIN", "RUTA 8CAP", "CALC 1MIN"];
 
-const PATHS = [
-  { title: "Tu primer crédito formal", subtitle: "7 capítulos", chapters: 7, completed: 3, gradient: "bg-gradient-to-br from-[#C8B6E2] to-[#7C3AED]", status: "in-progress" as const },
-  { title: "Vende más en tu bodega", subtitle: "5 capítulos", chapters: 5, completed: 0, gradient: "bg-gradient-to-br from-[#F26A2E] to-[#F04A8A]", status: "not-started" as const },
-  { title: "Ahorra S/ 100 en 30 días", subtitle: "4 capítulos", chapters: 4, completed: 4, gradient: "bg-gradient-to-br from-[#C4E27A] to-[#1F3A2E]", status: "completed" as const },
-] as const;
+export default async function Home() {
+  const supabase = await createClient();
 
-const RANKINGS = [
-  { rank: 1, title: "El Secreto Cap 1", subtitle: "Don Pedro" },
-  { rank: 2, title: "Receta Financiera Ep 5", subtitle: "Carlos" },
-  { rank: 3, title: "Vuelve al Crédito", subtitle: "Manuel" },
-  { rank: 4, title: "Coser tu Futuro Cap 3", subtitle: "Lucía" },
-  { rank: 5, title: "Don Pedro × Doña Rosa", subtitle: "Especial" },
-] as const;
+  const { data: user } = await supabase.auth.getUser();
 
-export default function Home() {
+  const [
+    { data: liveHero },
+    { data: recordings },
+    { data: courses },
+    { data: tools },
+    { data: upcomingLives },
+    { data: pathReadings },
+    { data: topRecordings },
+    { data: enrollments },
+  ] = await Promise.all([
+    supabase.from("lives").select("*").eq("status", "live").order("scheduled_at").limit(1).single(),
+    supabase.from("recordings").select("*").order("published_at", { ascending: false }).limit(10),
+    supabase.from("courses").select("*").eq("is_published", true).limit(10),
+    supabase.from("tools").select("*").eq("is_published", true).limit(10),
+    supabase.from("lives").select("*").eq("status", "scheduled").order("scheduled_at").limit(10),
+    supabase.from("readings").select("*").eq("category", "Ruta").limit(10),
+    supabase.from("recordings").select("*").order("views", { ascending: false }).limit(10),
+    supabase.from("enrollments").select("*, courses(title)").eq("user_id", user?.user?.id ?? "").limit(10),
+  ]);
+
+  const hero = liveHero ?? null;
+  const safeRecordings = recordings ?? [];
+  const safeCourses = courses ?? [];
+  const safeTools = tools ?? [];
+  const safeLives = upcomingLives ?? [];
+  const safePaths = pathReadings ?? [];
+  const safeTop = topRecordings ?? [];
+  const safeEnrollments = enrollments ?? [];
+
   return (
     <>
       <Sidebar />
@@ -70,173 +87,153 @@ export default function Home() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">Kapitalizando</h1>
-              <p className="text-sm text-[#A8AAAE]">
-                Educaci&oacute;n financiera y emprendimiento
-              </p>
+              <p className="text-sm text-[#A8AAAE]">Educación financiera y emprendimiento</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F04A8A]/10 text-[#F04A8A]">
-                  <Bell className="h-4 w-4" />
-                </div>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F04A8A]/10 text-[#F04A8A]">
+                <Bell className="h-4 w-4" />
               </div>
               <button className="inline-flex h-9 items-center gap-2 rounded-full bg-[#F5C53D] px-4 text-sm font-bold text-[#101012] transition-all hover:bg-[#F5C53D]/90">
-                <Plus className="h-4 w-4" />
-                Nuevo
+                <Plus className="h-4 w-4" /> Nuevo
               </button>
             </div>
           </div>
 
-          {/* Hero - Live en vivo */}
-          <section className="card-green mb-8 overflow-hidden p-6 md:p-8">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div className="max-w-2xl">
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#F04A8A]/20 px-3 py-1 text-xs font-medium text-[#F04A8A]">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-[#F04A8A]" />
-                  EN VIVO ESTA NOCHE
+          {/* Hero */}
+          {hero && (
+            <section className="card-green mb-8 overflow-hidden p-6 md:p-8">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div className="max-w-2xl">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#F04A8A]/20 px-3 py-1 text-xs font-medium text-[#F04A8A]">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-[#F04A8A]" />
+                    EN VIVO
+                  </div>
+                  <h2 className="text-2xl font-bold text-white md:text-3xl">{hero.title}</h2>
+                  <p className="mt-2 text-sm text-white/70">{hero.description}</p>
+                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-white/50">
+                    <span>🗓 {new Date(hero.scheduled_at).toLocaleDateString("es-PE", { weekday: "long", hour: "2-digit", minute: "2-digit" })}</span>
+                    <span>⏱ ~{hero.duration} min</span>
+                    <span>👥 {hero.preregistered_count} pre-agendados</span>
+                  </div>
                 </div>
-                <h2 className="text-2xl font-bold text-white md:text-3xl">
-                  El Secreto del &Eacute;xito de Barrio
-                </h2>
-                <p className="mt-2 text-sm text-white/70">
-                  Cap&iacute;tulo 2: C&oacute;mo prestarte sin que te coman vivo
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-white/50 max-w-xl">
-                  &ldquo;Don Pedro lleva 30 a&ntilde;os en V.E.S. sin caer en un
-                  gota a gota. Esta noche te ense&ntilde;a su sistema en vivo.&rdquo;
-                </p>
-                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-white/50">
-                  <span>🗓 Hoy 9:00 PM</span>
-                  <span>⏱ ~90 min</span>
-                  <span>👥 312 pre-agendados</span>
+                <div className="flex items-center gap-3">
+                  <button className="inline-flex h-10 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90">
+                    <Play className="h-4 w-4 fill-white" /> VER EN VIVO
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <button className="inline-flex h-10 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90">
-                  <Play className="h-4 w-4 fill-white" />
-                  VER EN VIVO
-                </button>
-                <button className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20">
-                  <Bell className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* Grabaciones recientes */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Grabaciones recientes"
-              subtitle="Revive los &uacute;ltimos lives"
-              href="/courses"
-            />
-            <ScrollRow>
-              {RECENT_VIDEOS.map((video) => (
-                <VideoCard key={video.title} {...video} />
-              ))}
-            </ScrollRow>
-          </section>
+          {safeRecordings.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Grabaciones recientes" subtitle="Revive los últimos lives" href="/courses" />
+              <ScrollRow>
+                {safeRecordings.map((r) => (
+                  <VideoCard key={r.id} title={r.title} instructor={r.title} duration={formatDuration(r.duration)} timeAgo={timeAgo(r.published_at)} />
+                ))}
+              </ScrollRow>
+            </section>
+          )}
 
           {/* Continuá donde quedaste */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Continu&aacute; donde quedaste"
-              subtitle="Tu progreso en los cursos"
-              href="/courses"
-            />
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {RECENT_VIDEOS.slice(0, 6).map((video, i) => (
-                <div
-                  key={video.title}
-                  className="group overflow-hidden rounded-[16px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]"
-                >
-                  <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
-                    <div className="flex h-full w-full items-center justify-center">
-                      <span className="text-2xl">📺</span>
+          {safeEnrollments.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Continuá donde quedaste" subtitle="Tu progreso en los cursos" href="/courses" />
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                {safeEnrollments.map((e) => (
+                  <div key={e.id} className="group overflow-hidden rounded-[16px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <BookOpen className="h-8 w-8 text-zinc-300" />
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <p className="text-xs font-medium text-[#101012] line-clamp-1">{e.courses?.title ?? "Curso"}</p>
+                      <ProgressBar value={e.progress ?? 0} className="mt-2" />
+                      <p className="mt-1 text-[11px] text-[#6B6F72]">{e.progress ?? 0}%</p>
                     </div>
                   </div>
-                  <div className="p-2">
-                    <p className="text-xs font-medium text-[#101012] line-clamp-1">
-                      {video.title}
-                    </p>
-                    <ProgressBar value={[60, 50, 30, 80, 25, 15][i]} className="mt-2" />
-                    <p className="mt-1 text-[11px] text-[#6B6F72]">
-                      {[60, 50, 30, 80, 25, 15][i]}%
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Cursos destacados */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Cursos destacados"
-              subtitle="Los maestros del barrio te ense&ntilde;an"
-              href="/courses"
-            />
-            <ScrollRow>
-              {COURSES.map((course) => (
-                <CourseCard key={course.title} {...course} />
-              ))}
-            </ScrollRow>
-          </section>
+          {safeCourses.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Cursos destacados" subtitle="Los maestros del barrio te enseñan" href="/courses" />
+              <ScrollRow>
+                {safeCourses.map((c) => (
+                  <CourseCard key={c.id} title={c.title} subtitle={c.description?.slice(0, 60)} instructor="" thumbnail={c.thumbnail_url ?? undefined} />
+                ))}
+              </ScrollRow>
+            </section>
+          )}
 
           {/* Herramientas */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Herramientas instant&aacute;neas"
-              subtitle="Aplica lo aprendido en minutos"
-              href="/tools"
-            />
-            <ScrollRow>
-              {TOOLS.map((tool) => (
-                <ToolCard key={tool.title} {...tool} />
-              ))}
-            </ScrollRow>
-          </section>
+          {safeTools.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Herramientas instantáneas" subtitle="Aplica lo aprendido en minutos" href="/tools" />
+              <ScrollRow>
+                {safeTools.map((t, i) => (
+                  <ToolCard
+                    key={t.id}
+                    icon={BookOpen}
+                    title={t.title}
+                    subtitle={t.description}
+                    color={toolColors[i % toolColors.length]}
+                    label={toolLabels[i % toolLabels.length]}
+                  />
+                ))}
+              </ScrollRow>
+            </section>
+          )}
 
           {/* Próximos lives */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Pr&oacute;ximos eventos en vivo"
-              subtitle="Reserva tu asiento"
-              href="/lives"
-            />
-            <ScrollRow>
-              {LIVES.map((live) => (
-                <LiveCard key={live.title} {...live} />
-              ))}
-            </ScrollRow>
-          </section>
+          {safeLives.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Próximos eventos en vivo" subtitle="Reserva tu asiento" href="/lives" />
+              <ScrollRow>
+                {safeLives.map((l) => (
+                  <LiveCard key={l.id} when={new Date(l.scheduled_at).toLocaleDateString("es-PE", { weekday: "short", hour: "2-digit" }).toUpperCase()} instructor="" title={l.title} subtitle={`${l.duration} min`} duration={`${l.duration} min`} />
+                ))}
+              </ScrollRow>
+            </section>
+          )}
 
           {/* Rutas de aprendizaje */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Rutas de aprendizaje"
-              subtitle="Series tem&aacute;ticas para dominar un tema"
-              href="/courses"
-            />
-            <ScrollRow>
-              {PATHS.map((path) => (
-                <PathCard key={path.title} {...path} />
-              ))}
-            </ScrollRow>
-          </section>
+          {safePaths.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Rutas de aprendizaje" subtitle="Series temáticas para dominar un tema" href="/courses" />
+              <ScrollRow>
+                {safePaths.map((p, i) => (
+                  <PathCard
+                    key={p.id}
+                    title={p.title}
+                    subtitle={`${p.duration_min} min`}
+                    chapters={5}
+                    completed={i === 2 ? 5 : i}
+                    gradient={["bg-gradient-to-br from-[#C8B6E2] to-[#7C3AED]", "bg-gradient-to-br from-[#F26A2E] to-[#F04A8A]", "bg-gradient-to-br from-[#C4E27A] to-[#1F3A2E]"][i % 3]}
+                    status={i === 2 ? "completed" : i === 0 ? "in-progress" : "not-started"}
+                  />
+                ))}
+              </ScrollRow>
+            </section>
+          )}
 
           {/* Top 10 */}
-          <section className="mb-8">
-            <SectionHeader
-              title="Top 10 esta semana"
-              href="/courses"
-            />
-            <ScrollRow>
-              {RANKINGS.map((item) => (
-                <RankCard key={item.rank} {...item} />
-              ))}
-            </ScrollRow>
-          </section>
+          {safeTop.length > 0 && (
+            <section className="mb-8">
+              <SectionHeader title="Top 10 esta semana" href="/courses" />
+              <ScrollRow>
+                {safeTop.slice(0, 10).map((r, i) => (
+                  <RankCard key={r.id} rank={i + 1} title={r.title} subtitle={`${r.views ?? 0} vistas`} />
+                ))}
+              </ScrollRow>
+            </section>
+          )}
 
           <StatsBar />
 
