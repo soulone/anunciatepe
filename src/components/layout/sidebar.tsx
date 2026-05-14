@@ -12,6 +12,7 @@ import {
   User,
   CreditCard,
   Crown,
+  Shield,
   Menu,
   X,
   Home,
@@ -73,16 +74,23 @@ export function Sidebar() {
   const pathname = usePathname();
   const supabase = createClient();
   const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { isLight, toggle: toggleTheme } = useTheme();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       if (data.user) {
         setUser({
           email: data.user.email,
           name: data.user.user_metadata?.full_name ?? data.user.email,
         });
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", data.user.id)
+          .single();
+        setIsAdmin(profile?.is_admin ?? false);
       }
     });
   }, [supabase]);
@@ -122,76 +130,107 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
+                className="group relative flex h-10 w-10 items-center justify-center rounded-xl transition-colors"
+              >
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
                   isActive
                     ? "bg-white/10 text-white"
-                    : "text-[#A8AAAE] hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <item.icon className="h-5 w-5" />
+                    : "text-[#A8AAAE] group-hover:bg-white/5 group-hover:text-white"
+                }`}>
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <span className="absolute left-full ml-3 whitespace-nowrap rounded-[8px] bg-[#17181B] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 pointer-events-none z-50">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </nav>
 
         <div className="mt-auto flex flex-col items-center gap-3">
-          <button className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F04A8A] text-white shadow-lg transition-transform hover:scale-105">
-            <Plus className="h-5 w-5" />
-          </button>
+          <div className="group relative">
+            <button className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F04A8A] text-white shadow-lg transition-transform hover:scale-105">
+              <Plus className="h-5 w-5" />
+            </button>
+            <span className="absolute left-full ml-3 whitespace-nowrap rounded-[8px] bg-[#17181B] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 pointer-events-none z-50">
+              Nuevo
+            </span>
+          </div>
 
-          <button
-            onClick={toggleTheme}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-[#A8AAAE] transition-colors hover:text-white"
-          >
-            {isLight ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex flex-col items-center gap-1 outline-none">
-              <Avatar className="h-9 w-9 ring-2 ring-[#F04A8A]/30 transition-all hover:ring-[#F04A8A]/60">
-                <AvatarFallback className="bg-[#F04A8A]/20 text-xs font-semibold text-[#F04A8A]">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="center"
-              side="right"
-              sideOffset={12}
-              className="w-48 rounded-[16px] border-[rgba(255,255,255,0.06)] bg-[#17181B] p-2"
+          <div className="group relative">
+            <button
+              onClick={toggleTheme}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-[#A8AAAE] transition-colors hover:text-white"
             >
-              <div className="px-2 py-1.5">
-                <p className="text-sm font-medium text-white">{user?.name ?? "Usuario"}</p>
-                <p className="text-xs text-[#A8AAAE]">{user?.email ?? ""}</p>
-              </div>
-              <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
-              <DropdownMenuItem
-                onClick={() => router.push("/profile")}
-                className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
+              {isLight ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
+            <span className="absolute left-full ml-3 whitespace-nowrap rounded-[8px] bg-[#17181B] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 pointer-events-none z-50">
+              {isLight ? "Modo oscuro" : "Modo claro"}
+            </span>
+          </div>
+
+          <div className="group relative">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex flex-col items-center gap-1 outline-none">
+                <Avatar className="h-9 w-9 ring-2 ring-[#F04A8A]/30 transition-all hover:ring-[#F04A8A]/60">
+                  <AvatarFallback className="bg-[#F04A8A]/20 text-xs font-semibold text-[#F04A8A]">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="center"
+                side="right"
+                sideOffset={12}
+                className="w-52 rounded-[16px] border-[rgba(255,255,255,0.06)] bg-[#17181B] p-2"
               >
-                <User className="mr-2 h-4 w-4" /> Mi perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push("/profile")}
-                className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
-              >
-                <CreditCard className="mr-2 h-4 w-4" /> Mis compras
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push("/profile")}
-                className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
-              >
-                <Crown className="mr-2 h-4 w-4" /> Mi plan
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
-              <DropdownMenuItem
-                onClick={handleSignOut}
-                className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#F04A8A] focus:bg-[#F04A8A]/10 focus:text-[#F04A8A]"
-              >
-                Cerrar sesión
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium text-white">{user?.name ?? "Usuario"}</p>
+                  <p className="text-xs text-[#A8AAAE]">{user?.email ?? ""}</p>
+                </div>
+                <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
+                <DropdownMenuItem
+                  onClick={() => router.push("/profile")}
+                  className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
+                >
+                  <User className="mr-2 h-4 w-4" /> Mi perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/profile")}
+                  className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
+                >
+                  <CreditCard className="mr-2 h-4 w-4" /> Mis compras
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/profile")}
+                  className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
+                >
+                  <Crown className="mr-2 h-4 w-4" /> Mi plan
+                </DropdownMenuItem>
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
+                    <DropdownMenuItem
+                      onClick={() => router.push("/admin")}
+                      className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#F5C53D] focus:bg-[#F5C53D]/10"
+                    >
+                      <Shield className="mr-2 h-4 w-4" /> Panel admin
+                    </DropdownMenuItem>
+                  </>
+                )}
+                <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#F04A8A] focus:bg-[#F04A8A]/10 focus:text-[#F04A8A]"
+                >
+                  Cerrar sesión
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <span className="absolute left-full ml-3 whitespace-nowrap rounded-[8px] bg-[#17181B] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 pointer-events-none z-50">
+              Perfil
+            </span>
+          </div>
         </div>
       </aside>
 
@@ -232,6 +271,9 @@ export function Sidebar() {
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><User className="mr-2 h-4 w-4" /> Mi perfil</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><CreditCard className="mr-2 h-4 w-4" /> Mis compras</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><Crown className="mr-2 h-4 w-4" /> Mi plan</DropdownMenuItem>
+            {isAdmin && (
+              <DropdownMenuItem onClick={() => router.push("/admin")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#F5C53D] focus:bg-[#F5C53D]/10"><Shield className="mr-2 h-4 w-4" /> Panel admin</DropdownMenuItem>
+            )}
             <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
             <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#F04A8A] focus:bg-[#F04A8A]/10 focus:text-[#F04A8A]">Cerrar sesión</DropdownMenuItem>
           </DropdownMenuContent>

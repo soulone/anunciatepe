@@ -46,12 +46,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     });
   }, [supabase, router, isSetupPage]);
 
-  if (!isSetupPage && isAdmin === null) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0E0E10]">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#F5C53D] border-t-transparent" />
-      </div>
-    );
+  if (!isSetupPage && !isAdmin) {
+    return null;
   }
 
   return (
