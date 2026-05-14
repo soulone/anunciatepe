@@ -23,7 +23,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [userEmail, setUserEmail] = useState("");
 
+  const isSetupPage = pathname === "/admin/setup";
+
   useEffect(() => {
+    if (isSetupPage) return;
+
     supabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) {
         router.push("/auth/login");
@@ -41,9 +45,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
       setIsAdmin(true);
     });
-  }, [supabase, router]);
+  }, [supabase, router, isSetupPage]);
 
-  if (isAdmin === null) {
+  if (!isSetupPage && isAdmin === null) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0E0E10]">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#F5C53D] border-t-transparent" />
