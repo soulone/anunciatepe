@@ -21,15 +21,21 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Kapitalizando",
+    default: "Kapitalizando — Educación Financiera para Kapitalistas",
     template: "%s — Kapitalizando",
   },
-  description: "Educación financiera y emprendimiento para kapitalistas.",
+  description:
+    "Aprende finanzas, emprendimiento y negocios con los maestros del barrio. Lives, cursos, herramientas y comunidad.",
   openGraph: {
     title: "Kapitalizando",
     description: "Educación financiera y emprendimiento para kapitalistas.",
     siteName: "Kapitalizando",
     type: "website",
+    locale: "es_PE",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

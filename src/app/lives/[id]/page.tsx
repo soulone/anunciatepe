@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { notFound } from "next/navigation";
 import { Calendar, Clock, Users, ChevronRight } from "lucide-react";
 import Link from "next/link";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: live } = await supabase.from("lives").select("title, description").eq("id", (await params).id).single();
+  if (!live) return { title: "Live no encontrado" };
+  return { title: `${live.title} — Kapitalizando`, description: live.description };
+}
 
 export default async function LiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

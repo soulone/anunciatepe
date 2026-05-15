@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
@@ -7,6 +8,13 @@ import { WizardComponent } from "@/components/tools/wizard-component";
 import { notFound } from "next/navigation";
 import { Construction } from "lucide-react";
 import Link from "next/link";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: tool } = await supabase.from("tools").select("title, description").eq("slug", (await params).slug).single();
+  if (!tool) return { title: "Herramienta no encontrada" };
+  return { title: `${tool.title} — Kapitalizando`, description: tool.description };
+}
 
 export default async function ToolDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

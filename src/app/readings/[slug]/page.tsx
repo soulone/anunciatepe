@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { notFound } from "next/navigation";
 import { BookOpen, Clock, User, ChevronRight, Lightbulb } from "lucide-react";
 import Link from "next/link";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: reading } = await supabase.from("readings").select("title, excerpt").eq("slug", (await params).slug).single();
+  if (!reading) return { title: "Lectura no encontrada" };
+  return { title: `${reading.title} — Kapitalizando`, description: reading.excerpt };
+}
 
 export default async function ReadingDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

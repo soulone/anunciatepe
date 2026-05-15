@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
@@ -7,6 +8,17 @@ import { CheckoutButton } from "@/components/payments/checkout-button";
 import { notFound } from "next/navigation";
 import { Play, Download, Share2, BookOpen, ChevronRight } from "lucide-react";
 import Link from "next/link";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: course } = await supabase.from("courses").select("title, description").eq("slug", (await params).slug).single();
+  if (!course) return { title: "Curso no encontrado" };
+  return {
+    title: `${course.title} — Kapitalizando`,
+    description: course.description,
+    openGraph: { title: course.title, description: course.description },
+  };
+}
 
 function formatDuration(sec: number): string {
   if (!sec) return "—";
