@@ -11,7 +11,7 @@ import { PathCard } from "@/components/learning-path/path-card";
 import { RankCard } from "@/components/ranking/rank-card";
 import { StatsBar } from "@/components/community/stats-bar";
 import { ProgressBar } from "@/components/shared/progress-bar";
-import { Bell, Play, Plus, BookOpen, Wrench, Radio, TrendingUp } from "lucide-react";
+import { Bell, Play, Plus, BookOpen, Wrench, Radio, TrendingUp, Calendar, Clock, Users, Info, Volume2, Calculator, FileText, Target, Brain, Route, Hash } from "lucide-react";
 import { CheckoutButton } from "@/components/payments/checkout-button";
 
 function formatDuration(min: number): string {
@@ -40,6 +40,18 @@ function getToolIcon(name: string) {
     Hash: "🔢",
   };
   return icons[name] ?? "🔧";
+}
+
+function getToolIconComponent(name: string) {
+  const icons: Record<string, any> = {
+    Calculator: Calculator,
+    FileText: FileText,
+    Target: Target,
+    Brain: Brain,
+    Route: Route,
+    Hash: Hash,
+  };
+  return icons[name] ?? Wrench;
 }
 
 const toolColors = ["amber", "morado", "coral", "cyan", "teal", "orange"];
@@ -105,25 +117,60 @@ export default async function Home() {
 
           {/* Hero */}
           {hero && (
-            <section className="card-green mb-8 overflow-hidden p-6 md:p-8">
-              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div className="max-w-2xl">
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#F04A8A]/20 px-3 py-1 text-xs font-medium text-[#F04A8A]">
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-[#F04A8A]" />
-                    EN VIVO
-                  </div>
-                  <h2 className="text-2xl font-bold text-white md:text-3xl">{hero.title}</h2>
-                  <p className="mt-2 text-sm text-white/70">{hero.description}</p>
-                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-white/50">
-                    <span>🗓 {new Date(hero.scheduled_at).toLocaleDateString("es-PE", { weekday: "long", hour: "2-digit", minute: "2-digit" })}</span>
-                    <span>⏱ ~{hero.duration} min</span>
-                    <span>👥 {hero.preregistered_count} pre-agendados</span>
-                  </div>
+            <section className="relative mb-8 min-h-[50vh] overflow-hidden rounded-[24px] md:min-h-[60vh]">
+              <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-black to-zinc-950" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E10] via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent" />
+              <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_30%_50%,_#F26A2E_0%,_transparent_60%)]" />
+
+              <div className="relative z-10 flex h-full min-h-[50vh] md:min-h-[60vh] flex-col justify-end p-6 md:p-10">
+                <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-[#F04A8A]/20 px-3 py-1 text-xs font-medium text-[#F04A8A] backdrop-blur-sm">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-[#F04A8A]" />
+                  EN VIVO
                 </div>
-                <div className="flex items-center gap-3">
-                  <button className="inline-flex h-10 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90">
+
+                <h2 className="max-w-3xl text-3xl font-bold leading-tight text-white md:text-5xl">
+                  {hero.title}
+                </h2>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-400 md:text-base">
+                  {hero.description}
+                </p>
+
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-zinc-500">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {new Date(hero.scheduled_at).toLocaleDateString("es-PE", { weekday: "long", hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5" />
+                    ~{hero.duration} min
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5" />
+                    {hero.preregistered_count} pre-agendados
+                  </span>
+                </div>
+
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <button className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg shadow-[#F26A2E]/25 transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">
                     <Play className="h-4 w-4 fill-white" /> VER EN VIVO
                   </button>
+                  <button className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white active:scale-[0.97]">
+                    <Bell className="h-4 w-4" />
+                  </button>
+                  <button className="inline-flex h-11 w-11 items-center justify-center rounded-full text-zinc-500 transition-colors hover:text-zinc-300 active:scale-[0.97]">
+                    <Info className="h-4 w-4" />
+                  </button>
+                  <span className="ml-auto flex items-center gap-1 text-xs text-zinc-600">
+                    <Volume2 className="h-3 w-3" /> 16+
+                  </span>
+                </div>
+
+                <div className="mt-6 flex gap-2">
+                  <span className="h-1.5 w-10 rounded-full bg-[#F26A2E]" />
+                  <span className="h-1.5 w-4 rounded-full bg-white/20" />
+                  <span className="h-1.5 w-4 rounded-full bg-white/20" />
+                  <span className="h-1.5 w-4 rounded-full bg-white/20" />
                 </div>
               </div>
             </section>
