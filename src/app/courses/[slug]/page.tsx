@@ -5,7 +5,8 @@ import { ProgressBar } from "@/components/shared/progress-bar";
 import { VideoPlayer } from "@/components/shared/video-player";
 import { CheckoutButton } from "@/components/payments/checkout-button";
 import { notFound } from "next/navigation";
-import { Play, Download, Share2, BookOpen } from "lucide-react";
+import { Play, Download, Share2, BookOpen, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 function formatDuration(sec: number): string {
   if (!sec) return "—";
@@ -40,6 +41,11 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
     <>
       <Sidebar />
       <main className="mx-auto max-w-[1440px] px-6 py-8 md:px-10">
+        <nav className="mb-6 flex items-center gap-2 text-sm text-[#909296]">
+          <Link href="/courses" className="transition-colors hover:text-white">Cursos</Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="truncate text-white">{course.title}</span>
+        </nav>
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
           <div>
             <VideoPlayer

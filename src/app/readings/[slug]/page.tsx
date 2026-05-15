@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { notFound } from "next/navigation";
-import { BookOpen, Clock, User } from "lucide-react";
+import { BookOpen, Clock, User, ChevronRight, Lightbulb } from "lucide-react";
 import Link from "next/link";
 
 export default async function ReadingDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -16,9 +16,11 @@ export default async function ReadingDetailPage({ params }: { params: Promise<{ 
     <>
       <Sidebar />
       <main className="mx-auto max-w-[800px] px-6 py-12 md:px-10">
-        <Link href="/readings" className="mb-6 inline-flex items-center gap-1 text-sm text-[#A8AAAE] transition-colors hover:text-white">
-          ← Volver a lecturas
-        </Link>
+        <nav className="mb-6 flex items-center gap-2 text-sm text-[#909296]">
+          <Link href="/readings" className="transition-colors hover:text-white">Lecturas</Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="truncate text-white">{reading.title}</span>
+        </nav>
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
@@ -63,8 +65,11 @@ export default async function ReadingDetailPage({ params }: { params: Promise<{ 
               <li>Toma decisiones informadas sobre tu dinero</li>
             </ul>
 
-            <div className="mt-8 rounded-[16px] bg-[#F5C53D]/10 p-5 text-sm text-[#F5C53D]">
-              <strong className="block mb-1">💡 Consejo Kapitalista</strong>
+            <div className="mt-8 rounded-[16px] bg-[#F5C53D]/10 p-5 text-sm">
+              <strong className="mb-1 flex items-center gap-2 text-[#F5C53D]">
+                <Lightbulb className="h-4 w-4" />
+                Consejo Kapitalista
+              </strong>
               <p className="text-[#F5C53D]/80">
                 La mejor inversión que puedes hacer es en tu educación financiera.
                 Cada minuto que dedicas a aprender, multiplica tus posibilidades de éxito.
