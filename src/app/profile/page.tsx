@@ -65,7 +65,7 @@ export default async function ProfilePage() {
         </div>
 
         {/* Stats */}
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
           <div className="rounded-[16px] bg-[#17181B] p-4 text-center">
             <p className="text-2xl font-bold text-[#F5C53D]">{enrollments?.length ?? 0}</p>
             <p className="mt-1 text-xs text-[#A8AAAE]">Cursos en progreso</p>
