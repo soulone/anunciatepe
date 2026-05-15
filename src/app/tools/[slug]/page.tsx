@@ -1,8 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
+import { LoanCalculator } from "@/components/tools/loan-calculator";
+import { QuizComponent } from "@/components/tools/quiz-component";
+import { WizardComponent } from "@/components/tools/wizard-component";
 import { notFound } from "next/navigation";
-import { Wrench, Construction } from "lucide-react";
+import { Construction } from "lucide-react";
 import Link from "next/link";
 
 export default async function ToolDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -15,23 +18,29 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <Sidebar />
-      <main className="mx-auto max-w-[1000px] px-6 py-16 md:px-10">
-        <div className="flex flex-col items-center justify-center text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-[20px] bg-[#F26A2E]/10">
-            <Construction className="h-10 w-10 text-[#F26A2E]" />
+      <main className="mx-auto max-w-[800px] px-6 py-8 md:px-10">
+        <nav className="mb-6 flex items-center gap-2 text-sm text-[#909296]">
+          <Link href="/tools" className="transition-colors hover:text-white">Apps</Link>
+          <span className="text-[#909296]/50">/</span>
+          <span className="truncate text-white">{tool.title}</span>
+        </nav>
+
+        {tool.type === "calculator" && <LoanCalculator config={tool.config} />}
+        {tool.type === "quiz" && <QuizComponent config={tool.config} />}
+        {tool.type === "wizard" && <WizardComponent config={tool.config} />}
+
+        {!["calculator", "quiz", "wizard"].includes(tool.type) && (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F26A2E]/10">
+              <Construction className="h-10 w-10 text-[#F26A2E]" />
+            </div>
+            <h1 className="mt-6 text-2xl font-bold text-white">{tool.title}</h1>
+            <p className="mt-2 text-[#909296]">{tool.description}</p>
+            <div className="mt-8 rounded-[16px] bg-[#141416] p-6">
+              <p className="text-sm text-[#909296]">🚧 Esta herramienta estará disponible próximamente.</p>
+            </div>
           </div>
-          <h1 className="mt-6 text-2xl font-bold text-white">{tool.title}</h1>
-          <p className="mt-2 text-[#A8AAAE]">{tool.description}</p>
-          <div className="mt-8 rounded-[16px] bg-[#17181B] p-6">
-            <p className="text-sm text-[#A8AAAE]">🚧 Esta herramienta estará disponible próximamente.</p>
-          </div>
-          <Link
-            href="/tools"
-            className="mt-8 inline-flex h-10 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#101012] transition-colors hover:bg-[#F5C53D]/90"
-          >
-            ← Volver a Apps
-          </Link>
-        </div>
+        )}
       </main>
       <Footer />
     </>
