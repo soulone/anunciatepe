@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, BookOpen, Radio, Users, TrendingUp, Wrench, BookText, FolderKanban } from "lucide-react";
+import { SeedButton } from "@/components/admin/seed-button";
 
 const STATS = [
   { icon: BookOpen, label: "Cursos", value: "8", href: "/admin/courses", color: "text-[#F26A2E]" },
@@ -78,18 +79,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="card-dark rounded-[24px] p-5">
-          <h2 className="mb-4 text-base font-semibold text-white">Instrucciones</h2>
-          <div className="space-y-3 text-sm text-[#A8AAAE]">
-            <p>
-              Para que un usuario sea admin, marca <code className="rounded bg-white/10 px-1.5 py-0.5 text-[#F5C53D]">is_admin = true</code> en Supabase Dashboard → Table Editor → profiles.
-            </p>
-            <div className="rounded-[12px] bg-[#F5C53D]/10 p-3 text-xs text-[#F5C53D]">
-              <strong className="block mb-1">⚠️ Migración SQL pendiente</strong>
-              Ejecuta el archivo <code className="rounded bg-white/10 px-1 py-0.5 text-xs">supabase/migrations/002_admin_role.sql</code> en el SQL Editor de Supabase.
-            </div>
-          </div>
-        </div>
+        <SeedButton />
       </div>
     </>
   );
