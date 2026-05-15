@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { LayoutDashboard, BookOpen, Radio, Wrench, BookText, FolderKanban, LogOut, Moon, Sun, CreditCard, Settings2 } from "lucide-react";
+import { LayoutDashboard, BookOpen, Radio, Wrench, BookText, Film, LogOut, Moon, Sun, CreditCard, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,6 +11,7 @@ const ADMIN_NAV = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
   { icon: BookOpen, label: "Cursos", href: "/admin/courses" },
   { icon: Radio, label: "Lives", href: "/admin/lives" },
+  { icon: Film, label: "Grabac.", href: "/admin/recordings" },
   { icon: Wrench, label: "Apps", href: "/admin/tools" },
   { icon: BookText, label: "Lecturas", href: "/admin/readings" },
   { icon: CreditCard, label: "Planes", href: "/admin/plans" },
