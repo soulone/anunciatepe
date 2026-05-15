@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+  const { allowed } = rateLimit(`mp-webhook-${ip}`, 20, 60000);
+  if (!allowed) return NextResponse.json({ error: "rate limit" }, { status: 429 });
   try {
     const body = await request.json();
     const { action, data } = body;
