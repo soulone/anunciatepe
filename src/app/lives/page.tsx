@@ -40,6 +40,7 @@ export default async function LivesPage() {
               {upcoming.map((l) => (
                 <LiveCard
                   key={l.id}
+                  id={l.id}
                   when={new Date(l.scheduled_at).toLocaleDateString("es-PE", { weekday: "short", hour: "2-digit" }).toUpperCase()}
                   instructor=""
                   title={l.title}

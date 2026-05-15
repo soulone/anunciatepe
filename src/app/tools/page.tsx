@@ -23,7 +23,7 @@ export default async function ToolsPage() {
         {safe.length > 0 ? (
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {safe.map((t, i) => (
-              <ToolCard key={t.id} icon={BookOpen} title={t.title} subtitle={t.description} color={toolColors[i % toolColors.length]} label={toolLabels[i % toolLabels.length]} />
+              <ToolCard key={t.id} icon={BookOpen} title={t.title} subtitle={t.description} color={toolColors[i % toolColors.length]} label={toolLabels[i % toolLabels.length]} slug={t.slug} />
             ))}
           </div>
         ) : (

@@ -23,7 +23,7 @@ export default async function CoursesPage() {
         {safe.length > 0 ? (
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {safe.map((c) => (
-              <CourseCard key={c.id} title={c.title} subtitle={c.description?.slice(0, 60)} instructor="" />
+              <CourseCard key={c.id} title={c.title} subtitle={c.description?.slice(0, 60)} instructor="" slug={c.slug} />
             ))}
           </div>
         ) : (

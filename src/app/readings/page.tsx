@@ -4,9 +4,9 @@ import { Footer } from "@/components/layout/footer";
 import { SectionHeader } from "@/components/shared/section-header";
 import { BookOpen, Clock, ArrowRight } from "lucide-react";
 
-function ReadingCard({ title, category, duration_min, excerpt, id }: any) {
+function ReadingCard({ title, category, duration_min, excerpt, id, slug }: any) {
   return (
-    <div key={id} className="group min-w-[300px] max-w-[340px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[16px] bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
+    <a key={id} href={`/readings/${slug}`} className="group block min-w-[300px] max-w-[340px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[16px] bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
       <div className="flex items-start justify-between">
         <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#F26A2E]/10">
           <BookOpen className="h-5 w-5 text-[#F26A2E]" />
@@ -21,7 +21,7 @@ function ReadingCard({ title, category, duration_min, excerpt, id }: any) {
       <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#F26A2E] opacity-0 transition-opacity group-hover:opacity-100">
         Leer más <ArrowRight className="h-3 w-3" />
       </div>
-    </div>
+    </a>
   );
 }
 

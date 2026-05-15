@@ -66,7 +66,7 @@ export default async function Home() {
     supabase.from("lives").select("*").eq("status", "scheduled").order("scheduled_at").limit(10),
     supabase.from("readings").select("*").eq("category", "Ruta").limit(10),
     supabase.from("recordings").select("*").order("views", { ascending: false }).limit(10),
-    supabase.from("enrollments").select("*, courses(title)").eq("user_id", user?.user?.id ?? "").limit(10),
+    supabase.from("enrollments").select("*, courses(title, slug)").eq("user_id", user?.user?.id ?? "").limit(10),
   ]);
 
   const hero = liveHero ?? null;
@@ -131,7 +131,7 @@ export default async function Home() {
               <SectionHeader title="Grabaciones recientes" subtitle="Revive los últimos lives" href="/courses" />
               <ScrollRow>
                 {safeRecordings.map((r) => (
-                  <VideoCard key={r.id} title={r.title} instructor={r.title} duration={formatDuration(r.duration)} timeAgo={timeAgo(r.published_at)} />
+                  <VideoCard key={r.id} title={r.title} instructor={r.title} duration={formatDuration(r.duration)} timeAgo={timeAgo(r.published_at)} href={r.live_id ? `/lives/${r.live_id}` : undefined} />
                 ))}
               </ScrollRow>
             </section>
@@ -143,18 +143,16 @@ export default async function Home() {
               <SectionHeader title="Continuá donde quedaste" subtitle="Tu progreso en los cursos" href="/courses" />
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {safeEnrollments.map((e) => (
-                  <div key={e.id} className="group overflow-hidden rounded-[16px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
+                  <a key={e.id} href={`/courses/${e.courses?.slug ?? ""}`} className="group overflow-hidden rounded-[16px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
                     <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
-                      <div className="flex h-full w-full items-center justify-center">
-                        <BookOpen className="h-8 w-8 text-zinc-300" />
-                      </div>
+                      <div className="flex h-full w-full items-center justify-center"><BookOpen className="h-8 w-8 text-zinc-300" /></div>
                     </div>
                     <div className="p-2">
                       <p className="text-xs font-medium text-[#101012] line-clamp-1">{e.courses?.title ?? "Curso"}</p>
                       <ProgressBar value={e.progress ?? 0} className="mt-2" />
                       <p className="mt-1 text-[11px] text-[#6B6F72]">{e.progress ?? 0}%</p>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </section>
@@ -166,7 +164,7 @@ export default async function Home() {
               <SectionHeader title="Cursos destacados" subtitle="Los maestros del barrio te enseñan" href="/courses" />
               <ScrollRow>
                 {safeCourses.map((c) => (
-                  <CourseCard key={c.id} title={c.title} subtitle={c.description?.slice(0, 60)} instructor="" thumbnail={c.thumbnail_url ?? undefined} />
+                  <CourseCard key={c.id} title={c.title} subtitle={c.description?.slice(0, 60)} instructor="" thumbnail={c.thumbnail_url ?? undefined} slug={c.slug} />
                 ))}
               </ScrollRow>
             </section>
@@ -185,6 +183,7 @@ export default async function Home() {
                     subtitle={t.description}
                     color={toolColors[i % toolColors.length]}
                     label={toolLabels[i % toolLabels.length]}
+                    slug={t.slug}
                   />
                 ))}
               </ScrollRow>
@@ -197,7 +196,7 @@ export default async function Home() {
               <SectionHeader title="Próximos eventos en vivo" subtitle="Reserva tu asiento" href="/lives" />
               <ScrollRow>
                 {safeLives.map((l) => (
-                  <LiveCard key={l.id} when={new Date(l.scheduled_at).toLocaleDateString("es-PE", { weekday: "short", hour: "2-digit" }).toUpperCase()} instructor="" title={l.title} subtitle={`${l.duration} min`} duration={`${l.duration} min`} />
+                  <LiveCard key={l.id} id={l.id} when={new Date(l.scheduled_at).toLocaleDateString("es-PE", { weekday: "short", hour: "2-digit" }).toUpperCase()} instructor="" title={l.title} subtitle={`${l.duration} min`} duration={`${l.duration} min`} />
                 ))}
               </ScrollRow>
             </section>
@@ -217,6 +216,7 @@ export default async function Home() {
                     completed={i === 2 ? 5 : i}
                     gradient={["bg-gradient-to-br from-[#C8B6E2] to-[#7C3AED]", "bg-gradient-to-br from-[#F26A2E] to-[#F04A8A]", "bg-gradient-to-br from-[#C4E27A] to-[#1F3A2E]"][i % 3]}
                     status={i === 2 ? "completed" : i === 0 ? "in-progress" : "not-started"}
+                    href="/courses"
                   />
                 ))}
               </ScrollRow>
@@ -229,7 +229,7 @@ export default async function Home() {
               <SectionHeader title="Top 10 esta semana" href="/courses" />
               <ScrollRow>
                 {safeTop.slice(0, 10).map((r, i) => (
-                  <RankCard key={r.id} rank={i + 1} title={r.title} subtitle={`${r.views ?? 0} vistas`} />
+                  <RankCard key={r.id} rank={i + 1} title={r.title} subtitle={`${r.views ?? 0} vistas`} href={r.live_id ? `/lives/${r.live_id}` : undefined} />
                 ))}
               </ScrollRow>
             </section>
