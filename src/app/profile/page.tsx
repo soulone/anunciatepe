@@ -1,4 +1,4 @@
-import { Topbar } from "@/components/layout/topbar";
+import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Settings, CreditCard, Crown, BookOpen, ChevronRight } from "lucide-reac
 export default function ProfilePage() {
   return (
     <>
-      <Topbar isAuthenticated />
+      <Sidebar />
       <main className="mx-auto max-w-[1000px] px-4 pt-24 pb-20 md:px-10">
         <div className="flex items-start gap-6">
           <Avatar className="h-20 w-20">

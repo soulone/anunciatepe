@@ -2,7 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { notFound } from "next/navigation";
-import { Wrench } from "lucide-react";
+import { Wrench, Construction } from "lucide-react";
+import Link from "next/link";
 
 export default async function ToolDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -14,21 +15,22 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <Sidebar />
-      <main className="mx-auto max-w-[1000px] px-6 py-8 md:px-10">
-        <div className="mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#F26A2E]/10">
-              <Wrench className="h-6 w-6 text-[#F26A2E]" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">{tool.title}</h1>
-              <p className="text-sm text-[#A8AAAE] capitalize">{tool.type}</p>
-            </div>
+      <main className="mx-auto max-w-[1000px] px-6 py-16 md:px-10">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-[20px] bg-[#F26A2E]/10">
+            <Construction className="h-10 w-10 text-[#F26A2E]" />
           </div>
-          <p className="mt-4 text-[#A8AAAE]">{tool.description}</p>
-        </div>
-        <div className="flex h-64 w-full items-center justify-center rounded-[24px] bg-[#17181B]">
-          <p className="text-[#A8AAAE]">Herramienta interactiva: {tool.title}</p>
+          <h1 className="mt-6 text-2xl font-bold text-white">{tool.title}</h1>
+          <p className="mt-2 text-[#A8AAAE]">{tool.description}</p>
+          <div className="mt-8 rounded-[16px] bg-[#17181B] p-6">
+            <p className="text-sm text-[#A8AAAE]">🚧 Esta herramienta estará disponible próximamente.</p>
+          </div>
+          <Link
+            href="/tools"
+            className="mt-8 inline-flex h-10 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#101012] transition-colors hover:bg-[#F5C53D]/90"
+          >
+            ← Volver a Apps
+          </Link>
         </div>
       </main>
       <Footer />

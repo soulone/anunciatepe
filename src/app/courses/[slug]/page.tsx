@@ -1,4 +1,4 @@
-import { Topbar } from "@/components/layout/topbar";
+import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ const CHAPTERS = [
 export default function CourseDetailPage() {
   return (
     <>
-      <Topbar />
+      <Sidebar />
       <main className="mx-auto max-w-[1440px] px-4 pt-24 pb-20 md:px-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
           <div>

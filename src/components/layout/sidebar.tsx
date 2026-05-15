@@ -3,8 +3,6 @@
 import {
   Calendar,
   Grid3X3,
-  Folder,
-  Settings,
   Clock,
   Plus,
   Moon,
@@ -13,9 +11,12 @@ import {
   CreditCard,
   Crown,
   Shield,
+  Bookmark,
   Menu,
   X,
   Home,
+  Wrench,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -54,19 +55,19 @@ function useTheme() {
 }
 
 const NAV_ITEMS = [
-  { icon: Calendar, label: "Inicio", href: "/" },
+  { icon: Home, label: "Inicio", href: "/" },
   { icon: Grid3X3, label: "Cursos", href: "/courses" },
-  { icon: Folder, label: "Comunidad", href: "/komunidad" },
-  { icon: Settings, label: "Perfil", href: "/profile" },
   { icon: Clock, label: "Lives", href: "/lives" },
+  { icon: Wrench, label: "Apps", href: "/tools" },
+  { icon: BookOpen, label: "Lecturas", href: "/readings" },
 ] as const;
 
 const MOBILE_NAV = [
   { icon: Home, label: "Inicio", href: "/" },
   { icon: Grid3X3, label: "Cursos", href: "/courses" },
-  { icon: Folder, label: "Comunidad", href: "/komunidad" },
   { icon: Clock, label: "Lives", href: "/lives" },
-  { icon: User, label: "Perfil", href: "/profile" },
+  { icon: Wrench, label: "Apps", href: "/tools" },
+  { icon: BookOpen, label: "Lecturas", href: "/readings" },
 ] as const;
 
 export function Sidebar() {
@@ -207,6 +208,12 @@ export function Sidebar() {
                 >
                   <Crown className="mr-2 h-4 w-4" /> Mi plan
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/my-list")}
+                  className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"
+                >
+                  <Bookmark className="mr-2 h-4 w-4" /> Mi lista
+                </DropdownMenuItem>
                 {isAdmin && (
                   <>
                     <DropdownMenuSeparator className="bg-[rgba(255,255,255,0.06)]" />
@@ -271,6 +278,7 @@ export function Sidebar() {
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><User className="mr-2 h-4 w-4" /> Mi perfil</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><CreditCard className="mr-2 h-4 w-4" /> Mis compras</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><Crown className="mr-2 h-4 w-4" /> Mi plan</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/my-list")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#A8AAAE] focus:bg-white/5 focus:text-white"><Bookmark className="mr-2 h-4 w-4" /> Mi lista</DropdownMenuItem>
             {isAdmin && (
               <DropdownMenuItem onClick={() => router.push("/admin")} className="cursor-pointer rounded-[12px] px-2 py-2 text-sm text-[#F5C53D] focus:bg-[#F5C53D]/10"><Shield className="mr-2 h-4 w-4" /> Panel admin</DropdownMenuItem>
             )}

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Topbar } from "@/components/layout/topbar";
+import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { StatsBar } from "@/components/community/stats-bar";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -19,7 +19,7 @@ export default async function CommunityPage() {
 
   return (
     <>
-      <Topbar />
+      <Sidebar />
       <main>
         <div className="mx-auto max-w-[1440px] px-4 pt-24 pb-10 md:px-10">
           <div className="mb-6">

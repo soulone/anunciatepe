@@ -2,7 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { notFound } from "next/navigation";
-import { BookOpen, Clock } from "lucide-react";
+import { BookOpen, Construction } from "lucide-react";
+import Link from "next/link";
 
 export default async function ReadingDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -14,25 +15,23 @@ export default async function ReadingDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <Sidebar />
-      <main className="mx-auto max-w-[800px] px-6 py-8 md:px-10">
-        <div className="mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#F26A2E]/10">
-              <BookOpen className="h-6 w-6 text-[#F26A2E]" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">{reading.title}</h1>
-              <div className="flex items-center gap-3 text-sm text-[#A8AAAE]">
-                <span>Por {reading.author}</span>
-                <span>&middot;</span>
-                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {reading.duration_min} min</span>
-                <span>&middot;</span>
-                <span>{reading.category}</span>
-              </div>
-            </div>
+      <main className="mx-auto max-w-[800px] px-6 py-16 md:px-10">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-[20px] bg-[#F26A2E]/10">
+            <Construction className="h-10 w-10 text-[#F26A2E]" />
           </div>
-          <p className="mt-4 leading-relaxed text-[#A8AAAE]">{reading.excerpt}</p>
-          <p className="mt-4 text-sm text-[#A8AAAE]/60">Contenido completo próximamente</p>
+          <h1 className="mt-6 text-2xl font-bold text-white">{reading.title}</h1>
+          <p className="mt-2 text-[#A8AAAE]">Por {reading.author} · {reading.duration_min} min</p>
+          <p className="mt-4 max-w-md text-[#A8AAAE]">{reading.excerpt}</p>
+          <div className="mt-8 rounded-[16px] bg-[#17181B] p-6">
+            <p className="text-sm text-[#A8AAAE]">🚧 Esta lectura estará disponible próximamente.</p>
+          </div>
+          <Link
+            href="/readings"
+            className="mt-8 inline-flex h-10 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#101012] transition-colors hover:bg-[#F5C53D]/90"
+          >
+            ← Volver a Lecturas
+          </Link>
         </div>
       </main>
       <Footer />

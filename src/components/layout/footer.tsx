@@ -13,7 +13,7 @@ const FOOTER_LINKS = [
   {
     label: "Comunidad",
     items: [
-      { label: "Proyectos", href: "/komunidad" },
+      { label: "Proyectos", href: "/comunidad" },
       { label: "Foro", href: "#" },
       { label: "Discord", href: "#" },
     ],

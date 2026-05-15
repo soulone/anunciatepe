@@ -1,53 +1,27 @@
-import { Topbar } from "@/components/layout/topbar";
+import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
-import { SectionHeader } from "@/components/shared/section-header";
-import { ScrollRow } from "@/components/shared/scroll-arrows";
-import { VideoCard } from "@/components/content/video-card";
-import { Bookmark, Heart } from "lucide-react";
-
-const SAVED_VIDEOS = [
-  { title: "Don Pedro Cap. 1", instructor: "Don Pedro", duration: "1h 24m", timeAgo: "Guardado" },
-  { title: "Lucía - Crédito", instructor: "Lucía", duration: "1h 47m", timeAgo: "Guardado" },
-  { title: "Comunidad Q&A Mar", instructor: "Equipo", duration: "58 min", timeAgo: "Guardado" },
-  { title: "Manuel - Pitch", instructor: "Manuel", duration: "1h 12m", timeAgo: "Guardado" },
-] as const;
+import { Bookmark } from "lucide-react";
+import Link from "next/link";
 
 export default function MyListPage() {
   return (
     <>
-      <Topbar isAuthenticated />
-      <main className="mx-auto max-w-[1440px] px-4 pt-24 pb-20 md:px-10">
-        <div className="mb-6 flex items-center gap-2">
-          <Bookmark className="h-6 w-6 text-primary" />
-          <h1 className="text-2xl font-bold text-white">Mi lista</h1>
-        </div>
-
-        <section className="mb-10">
-          <SectionHeader title="Guardados" subtitle="Videos que marcaste para ver después" />
-          <ScrollRow>
-            {SAVED_VIDEOS.map((video) => (
-              <div key={video.title} className="relative">
-                <VideoCard {...video} />
-                <button className="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-red-400 backdrop-blur-sm transition-colors hover:bg-black/80">
-                  <Heart className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </ScrollRow>
-        </section>
-
-        <section>
-          <SectionHeader
-            title="Recomendados para ti"
-            subtitle="Basado en lo que has visto"
+      <Sidebar />
+      <main className="mx-auto max-w-[800px] px-6 py-20 md:px-10">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-[20px] bg-[#F04A8A]/10">
+            <Bookmark className="h-10 w-10 text-[#F04A8A]" />
+          </div>
+          <h1 className="mt-6 text-2xl font-bold text-white">Mi lista</h1>
+          <p className="mt-2 text-[#A8AAAE]">Tu lista está vacía</p>
+          <p className="mt-1 text-sm text-[#A8AAAE]/60">Los cursos y videos que guardes aparecerán aquí.</p>
+          <Link
             href="/courses"
-          />
-          <ScrollRow>
-            {SAVED_VIDEOS.map((video) => (
-              <VideoCard key={`rec-${video.title}`} {...video} />
-            ))}
-          </ScrollRow>
-        </section>
+            className="mt-8 inline-flex h-10 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#101012] transition-colors hover:bg-[#F5C53D]/90"
+          >
+            Explorar cursos →
+          </Link>
+        </div>
       </main>
       <Footer />
     </>
