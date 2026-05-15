@@ -12,6 +12,7 @@ import { RankCard } from "@/components/ranking/rank-card";
 import { StatsBar } from "@/components/community/stats-bar";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { Bell, Play, Plus, BookOpen, Wrench, Radio, TrendingUp } from "lucide-react";
+import { CheckoutButton } from "@/components/payments/checkout-button";
 
 function formatDuration(min: number): string {
   if (!min) return "—";
@@ -58,6 +59,7 @@ export default async function Home() {
     { data: pathReadings },
     { data: topRecordings },
     { data: enrollments },
+    { data: plans },
   ] = await Promise.all([
     supabase.from("lives").select("*").eq("status", "live").order("scheduled_at").limit(1).single(),
     supabase.from("recordings").select("*").order("published_at", { ascending: false }).limit(10),
@@ -67,6 +69,7 @@ export default async function Home() {
     supabase.from("readings").select("*").eq("category", "Ruta").limit(10),
     supabase.from("recordings").select("*").order("views", { ascending: false }).limit(10),
     supabase.from("enrollments").select("*, courses(title, slug)").eq("user_id", user?.user?.id ?? "").limit(10),
+    supabase.from("products").select("*").eq("is_active", true).order("sort_order"),
   ]);
 
   const hero = liveHero ?? null;
@@ -77,6 +80,7 @@ export default async function Home() {
   const safePaths = pathReadings ?? [];
   const safeTop = topRecordings ?? [];
   const safeEnrollments = enrollments ?? [];
+  const safePlans = plans ?? [];
 
   return (
     <>
@@ -234,6 +238,32 @@ export default async function Home() {
               </ScrollRow>
             </section>
           )}
+
+          {/* Planes de suscripción */}
+          <section className="mb-8">
+            <SectionHeader title="Planes" subtitle="Elige el plan que mejor se adapte a ti" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {safePlans.map((plan) => (
+                <div key={plan.id} className="card-dark rounded-[24px] p-6 transition-all hover:scale-[1.02]">
+                  <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+                  <p className="mt-1 text-sm text-[#A8AAAE]">{plan.description}</p>
+                  <p className="mt-4 font-heading text-3xl font-bold text-[#F5C53D]">
+                    S/ {plan.price}
+                    <span className="text-base font-normal text-[#A8AAAE]">/{plan.interval}</span>
+                  </p>
+                  <div className="mt-6">
+                    <CheckoutButton
+                      productKey={plan.key}
+                      productName={plan.name}
+                      price={plan.price}
+                      type="plan"
+                      itemId={plan.key}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
           <StatsBar />
 
