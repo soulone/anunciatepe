@@ -11,6 +11,8 @@ const ADMIN_NAV = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
   { icon: BookOpen, label: "Cursos", href: "/admin/courses" },
   { icon: Radio, label: "Lives", href: "/admin/lives" },
+  { icon: Wrench, label: "Apps", href: "/admin/tools" },
+  { icon: BookText, label: "Lecturas", href: "/admin/readings" },
   { icon: CreditCard, label: "Planes", href: "/admin/plans" },
   { icon: Settings2, label: "Config.", href: "/admin/settings" },
 ] as const;
