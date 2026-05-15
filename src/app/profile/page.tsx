@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { Settings, CreditCard, Crown, BookOpen, Bookmark, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { CheckoutButton } from "@/components/payments/checkout-button";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -82,18 +83,34 @@ export default async function ProfilePage() {
 
         {/* Battle Pass / Plan */}
         {!subscription && (
-          <section className="mt-8 rounded-[24px] bg-gradient-to-br from-[#F5C53D]/10 to-[#F26A2E]/10 p-6">
-            <div className="flex items-center justify-between">
+          <section className="mt-8 rounded-[24px] bg-gradient-to-br from-[#F26A2E]/10 to-[#F5C53D]/10 border-2 border-[#F26A2E]/20 p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg font-bold text-white">Activa tu Plan</h2>
-                <p className="text-sm text-[#A8AAAE]">Desbloquea todo el contenido de Kapitalizando</p>
+                <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-[#F5C53D]/20 px-3 py-1 text-xs font-medium text-[#F5C53D]">
+                  💎 ¿Quieres más?
+                </div>
+                <h2 className="text-lg font-bold text-white">Por solo S/19.90 al mes</h2>
+                <p className="mt-1 text-sm text-[#909296]">
+                  Acceso a todo el contenido nuevo que se lance.
+                </p>
+                <ul className="mt-3 space-y-1.5">
+                  {["Cursos ilimitados", "Lives exclusivos", "Herramientas premium", "Sin compromiso, cancela cuando quieras"].map((b) => (
+                    <li key={b} className="flex items-center gap-2 text-sm text-[#909296]">
+                      <span className="text-[#C4E27A]">✅</span> {b}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <Link
-                href="/"
-                className="inline-flex h-9 items-center gap-2 rounded-full bg-[#F5C53D] px-5 text-sm font-bold text-[#101012] transition-colors hover:bg-[#F5C53D]/90"
-              >
-                Ver planes
-              </Link>
+              <div className="shrink-0">
+                <CheckoutButton
+                  productKey="battle_pass"
+                  productName="Battle Pass"
+                  price={19.90}
+                  type="plan"
+                  itemId="battle_pass"
+                  compact
+                />
+              </div>
             </div>
           </section>
         )}
