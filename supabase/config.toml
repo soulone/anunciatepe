@@ -1,0 +1,9 @@
+[functions]
+[functions.process-payment]
+verify_jwt = false
+
+[functions.renew-subscriptions]
+verify_jwt = false
+
+[functions.send-live-reminder]
+verify_jwt = false
