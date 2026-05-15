@@ -11,7 +11,7 @@ interface CourseCardProps {
 
 export function CourseCard({ title, subtitle, instructor, thumbnail, slug }: CourseCardProps) {
   return (
-    <Link href={`/courses/${slug}`} className="group relative min-w-[200px] max-w-[220px] flex-shrink-0 overflow-hidden rounded-[16px] bg-white text-[#101012] shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.03] block">
+    <Link href={`/courses/${slug}`} className="group relative min-w-[200px] max-w-[220px] flex-shrink-0 overflow-hidden rounded-[16px] bg-white text-[#101012] shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] block">
       <div className="relative aspect-[2/3] overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
         {thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element

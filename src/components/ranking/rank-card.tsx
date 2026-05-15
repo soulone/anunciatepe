@@ -9,7 +9,7 @@ interface RankCardProps {
 
 export function RankCard({ rank, title, subtitle, href }: RankCardProps) {
   const content = (
-    <div className="group relative min-w-[170px] max-w-[190px] flex-shrink-0 overflow-hidden rounded-[16px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
+    <div className="group relative min-w-[170px] max-w-[190px] flex-shrink-0 overflow-hidden rounded-[16px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
       <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[140px] font-black leading-none text-[rgba(0,0,0,0.04)]" style={{ WebkitTextStroke: "2px rgba(0,0,0,0.06)" }}>
           {String(rank).padStart(2, "0")}

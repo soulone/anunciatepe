@@ -13,7 +13,7 @@ interface PathCardProps {
 
 export function PathCard({ title, subtitle, chapters, completed, gradient, status, href }: PathCardProps) {
   const content = (
-    <div className={`min-w-[300px] max-w-[340px] flex-shrink-0 overflow-hidden rounded-[24px] p-5 text-white transition-all duration-300 hover:scale-[1.02] ${gradient}`}>
+    <div className={`min-w-[300px] max-w-[340px] flex-shrink-0 overflow-hidden rounded-[24px] p-5 text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${gradient}`}>
       <h3 className="text-base font-semibold text-white">{title}</h3>
       <p className="mt-1 text-sm text-white/70">{subtitle}</p>
       <div className="mt-4 flex items-center gap-2 text-xs text-white/60">

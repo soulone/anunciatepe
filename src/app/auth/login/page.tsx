@@ -111,10 +111,15 @@ export default function LoginPage() {
             {error && (
               <p className="text-xs text-[#F04A8A]">{error}</p>
             )}
+            <div className="flex justify-end">
+              <button type="button" className="text-xs text-[#909296] transition-colors hover:text-[#F26A2E]">
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#F5C53D] py-5 text-base font-bold text-[#101012] hover:bg-[#F5C53D]/90"
+              className="w-full bg-[#F5C53D] py-5 text-base font-bold text-[#101012] hover:bg-[#F5C53D]/90 active:scale-[0.97]"
             >
               {loading ? "Entrando..." : "Iniciar sesión"}
             </Button>

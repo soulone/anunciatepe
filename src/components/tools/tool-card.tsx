@@ -23,7 +23,7 @@ export function ToolCard({ icon: Icon, title, subtitle, color, label, slug }: To
   const cfg = colorConfig[color] ?? colorConfig.amber;
 
   return (
-    <Link href={`/tools/${slug}`} className="group relative min-w-[200px] max-w-[220px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[16px] bg-white text-[#101012] shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02] block">
+    <Link href={`/tools/${slug}`} className="group relative min-w-[200px] max-w-[220px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[16px] bg-white text-[#101012] shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] block">
       <div className="relative z-10 flex flex-col gap-3 p-4">
         <div className={`flex h-10 w-10 items-center justify-center rounded-[12px] ${cfg.bg} ${cfg.text} transition-colors`}>
           <Icon className="h-5 w-5" />

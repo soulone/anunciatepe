@@ -12,7 +12,7 @@ interface LiveCardProps {
 
 export function LiveCard({ when, instructor, title, subtitle, duration, id }: LiveCardProps) {
   return (
-    <Link href={`/lives/${id}`} className="group relative min-w-[280px] max-w-[320px] flex-shrink-0 overflow-hidden rounded-[16px] bg-[#17181B] transition-all duration-300 hover:scale-[1.02] block">
+    <Link href={`/lives/${id}`} className="group relative min-w-[280px] max-w-[320px] flex-shrink-0 overflow-hidden rounded-[16px] bg-[#17181B] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] block">
       <div className="relative aspect-video overflow-hidden rounded-[16px] bg-gradient-to-br from-zinc-800 to-zinc-900">
         <div className="flex h-full w-full items-center justify-center"><span className="text-4xl">🎬</span></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />

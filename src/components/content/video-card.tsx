@@ -12,7 +12,7 @@ interface VideoCardProps {
 
 export function VideoCard({ title, instructor, duration, timeAgo, thumbnail, href }: VideoCardProps) {
   const content = (
-    <div className="group relative min-w-[260px] max-w-[300px] flex-shrink-0 overflow-hidden rounded-[16px] bg-white text-[#101012] shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02]">
+    <div className="group relative min-w-[260px] max-w-[300px] flex-shrink-0 overflow-hidden rounded-[16px] bg-white text-[#101012] shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
       <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
         {thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element
