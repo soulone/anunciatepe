@@ -42,12 +42,7 @@ export default async function Home() {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Landing: datos de vista previa (para no logueados)
-  const [
-    { data: previewCourses },
-    { data: previewProjects },
-    { data: previewTools },
-  ] = await Promise.all([
-    supabase.from("courses").select("title, slug, category").eq("is_published", true).limit(8),
+  const [previewProjects, previewTools] = await Promise.all([
     supabase.from("projects").select("*").in("status", ["active", "funded"]).order("raised_amount", { ascending: false }).limit(3),
     supabase.from("tools").select("title, slug, type, color_theme").eq("is_published", true).limit(8),
   ]);
@@ -64,7 +59,7 @@ export default async function Home() {
             </div>
           </div>
           <LandingHero />
-          <ContentShowcase courses={previewCourses ?? []} projects={previewProjects ?? []} tools={previewTools ?? []} />
+          <ContentShowcase projects={previewProjects?.data ?? []} tools={previewTools?.data ?? []} />
           <LandingTestimonials />
           <Footer />
         </div>
