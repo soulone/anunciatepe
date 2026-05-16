@@ -11,8 +11,11 @@ import { PathCard } from "@/components/learning-path/path-card";
 import { RankCard } from "@/components/ranking/rank-card";
 import { StatsBar } from "@/components/community/stats-bar";
 import { ProgressBar } from "@/components/shared/progress-bar";
-import { Bell, Play, Plus, BookOpen, Wrench, Radio, TrendingUp, Calendar, Clock, Users, Info, Volume2, Calculator, FileText, Target, Brain, Route, Hash } from "lucide-react";
+import { Bell, Play, Plus, BookOpen, TrendingUp, Calendar, Clock, Users, Info, Volume2 } from "lucide-react";
 import { CheckoutButton } from "@/components/payments/checkout-button";
+import { LandingHero } from "@/components/landing/landing-hero";
+import { LandingBenefits } from "@/components/landing/landing-benefits";
+import { LandingTestimonials } from "@/components/landing/landing-testimonials";
 
 function formatDuration(min: number): string {
   if (!min) return "—";
@@ -30,37 +33,34 @@ function timeAgo(date: string): string {
   return `Hace ${Math.floor(days / 7)} sem.`;
 }
 
-function getToolIcon(name: string) {
-  const icons: Record<string, any> = {
-    Calculator: "🧮",
-    FileText: "📝",
-    Target: "🎯",
-    Brain: "🧠",
-    Route: "🛤️",
-    Hash: "🔢",
-  };
-  return icons[name] ?? "🔧";
-}
-
-function getToolIconComponent(name: string) {
-  const icons: Record<string, any> = {
-    Calculator: Calculator,
-    FileText: FileText,
-    Target: Target,
-    Brain: Brain,
-    Route: Route,
-    Hash: Hash,
-  };
-  return icons[name] ?? Wrench;
-}
-
 const toolColors = ["amber", "morado", "coral", "cyan", "teal", "orange"];
 const toolLabels = ["WIZARD 3P", "WIZARD 7P", "RUTA 5MIN", "QUIZ 2MIN", "RUTA 8CAP", "CALC 1MIN"];
 
 export default async function Home() {
   const supabase = await createClient();
 
-  const { data: user } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Landing page para usuarios NO logueados
+  if (!user) {
+    return (
+      <>
+        <div className="min-h-full bg-[#0E0E10] font-body text-white antialiased">
+          <div className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between bg-[#0E0E10]/80 px-6 py-4 backdrop-blur-sm md:px-10">
+            <span className="font-heading text-xl font-bold text-[#F26A2E]">KAPITALIZANDO</span>
+            <div className="flex items-center gap-3">
+              <a href="/auth/login" className="text-sm text-[#909296] transition-colors hover:text-white">Iniciar sesión</a>
+              <a href="/auth/register" className="inline-flex h-9 items-center gap-2 rounded-full bg-[#F26A2E] px-5 text-sm font-bold text-white transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">Empieza gratis</a>
+            </div>
+          </div>
+          <LandingHero />
+          <LandingBenefits />
+          <LandingTestimonials />
+          <Footer />
+        </div>
+      </>
+    );
+  }
 
   const [
     { data: liveHero },
@@ -80,7 +80,7 @@ export default async function Home() {
     supabase.from("lives").select("*").eq("status", "scheduled").order("scheduled_at").limit(10),
     supabase.from("readings").select("*").eq("category", "Ruta").limit(10),
     supabase.from("recordings").select("*").order("views", { ascending: false }).limit(10),
-    supabase.from("enrollments").select("*, courses(title, slug)").eq("user_id", user?.user?.id ?? "").limit(10),
+    supabase.from("enrollments").select("*, courses(title, slug)").eq("user_id", user?.id ?? "").limit(10),
     supabase.from("products").select("*").eq("is_active", true).order("sort_order"),
   ]);
 
