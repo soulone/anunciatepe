@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Save, CheckCircle, XCircle, Eye, EyeOff, Upload, Trash2, Image } from "lucide-react";
+import { uploadLogoAction, deleteLogoAction } from "@/lib/logo-upload";
 
 export default function AdminSettings() {
   const supabase = createClient();
@@ -48,73 +49,43 @@ export default function AdminSettings() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowed = ["image/png", "image/jpeg", "image/webp"];
-    if (!allowed.includes(file.type)) {
-      setFeedback("error");
-      setFeedbackMsg("Formato no soportado. Usa PNG, JPG o WebP.");
-      setTimeout(() => setFeedback(null), 3000);
-      return;
-    }
-    if (file.size > 500 * 1024) {
-      setFeedback("error");
-      setFeedbackMsg("La imagen no debe superar 500KB.");
-      setTimeout(() => setFeedback(null), 3000);
-      return;
-    }
-
     setUploading(true);
+    setLogoPreview(URL.createObjectURL(file));
 
-    // Vista previa local
-    const localUrl = URL.createObjectURL(file);
-    setLogoPreview(localUrl);
+    // Convertir a base64 para enviar al server action
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = (ev.target?.result as string)?.split(",")[1] ?? "";
+      const result = await uploadLogoAction(base64, file.name, file.type);
 
-    const ext = file.name.split(".").pop() ?? "png";
-    const fileName = `logo-${Date.now()}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("logos")
-      .upload(fileName, file, { upsert: true, contentType: file.type });
-
-    if (uploadError) {
-      setFeedback("error");
-      setFeedbackMsg(`Error al subir: ${uploadError.message}`);
+      if (result.error) {
+        setFeedback("error");
+        setFeedbackMsg(result.error);
+      } else if (result.url) {
+        update("SITE_LOGO_URL", result.url);
+        setLogoPreview(result.url);
+        setFeedback("success");
+        setFeedbackMsg("Logo subido exitosamente");
+      }
       setUploading(false);
       setTimeout(() => setFeedback(null), 3000);
-      return;
-    }
-
-    const { data: urlData } = supabase.storage.from("logos").getPublicUrl(fileName);
-    const publicUrl = urlData?.publicUrl ?? "";
-
-    if (publicUrl) {
-      await supabase.from("settings").upsert(
-        { key: "SITE_LOGO_URL", value: publicUrl },
-        { onConflict: "key" }
-      );
-      update("SITE_LOGO_URL", publicUrl);
-      setLogoPreview(publicUrl);
-      setFeedback("success");
-      setFeedbackMsg("Logo subido exitosamente");
-      setTimeout(() => setFeedback(null), 3000);
-    }
-
-    setUploading(false);
+    };
+    reader.readAsDataURL(file);
   }
 
   async function handleLogoDelete() {
-    const currentUrl = settings["SITE_LOGO_URL"];
-    if (currentUrl) {
-      const path = currentUrl.split("/logos/").pop();
-      if (path) await supabase.storage.from("logos").remove([path]);
+    setUploading(true);
+    const result = await deleteLogoAction();
+    if (result.error) {
+      setFeedback("error");
+      setFeedbackMsg(result.error);
+    } else {
+      update("SITE_LOGO_URL", "");
+      setLogoPreview(null);
+      setFeedback("success");
+      setFeedbackMsg("Logo eliminado");
     }
-    await supabase.from("settings").upsert(
-      { key: "SITE_LOGO_URL", value: "" },
-      { onConflict: "key" }
-    );
-    update("SITE_LOGO_URL", "");
-    setLogoPreview(null);
-    setFeedback("success");
-    setFeedbackMsg("Logo eliminado");
+    setUploading(false);
     setTimeout(() => setFeedback(null), 3000);
   }
 
