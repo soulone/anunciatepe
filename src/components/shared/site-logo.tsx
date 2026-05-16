@@ -1,45 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useLogoSrc } from "@/components/providers/logo-provider";
 
-export function SiteLogo({ className = "" }: { className?: string }) {
-  const [mounted, setMounted] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+interface SiteLogoProps {
+  src?: string | null;
+  className?: string;
+}
 
-  useEffect(() => {
-    setMounted(true);
-    const supabase = createClient();
-    supabase
-      .from("settings")
-      .select("value")
-      .eq("key", "SITE_LOGO_URL")
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (data?.value && !error) setLogoUrl(data.value);
-        setLoading(false);
-      });
-  }, []);
+export function SiteLogo({ src: propSrc, className = "" }: SiteLogoProps) {
+  const contextSrc = useLogoSrc();
+  const src = propSrc ?? contextSrc;
 
-  const placeholder = (
-    <div className={`flex h-10 w-10 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#F26A2E]/20 to-[#F5C53D]/10 ${className}`}>
-      <span className="font-heading text-lg font-bold text-[#F26A2E]">K</span>
-    </div>
-  );
-
-  if (!mounted) return placeholder;
-
-  if (loading) {
-    return placeholder;
-  }
-
-  if (logoUrl) {
+  if (src) {
     return (
       <div className={`flex h-10 w-10 items-center justify-center ${className}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={logoUrl}
+          src={src}
           alt="Kapitalizando"
           className="h-full w-full rounded-[10px] object-contain"
         />
@@ -47,5 +24,9 @@ export function SiteLogo({ className = "" }: { className?: string }) {
     );
   }
 
-  return placeholder;
+  return (
+    <div className={`flex h-10 w-10 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#F26A2E]/20 to-[#F5C53D]/10 ${className}`}>
+      <span className="font-heading text-lg font-bold text-[#F26A2E]">K</span>
+    </div>
+  );
 }

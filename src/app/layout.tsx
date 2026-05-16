@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { createClient } from "@supabase/supabase-js";
 import "./globals.css";
 import { AgentationProvider } from "@/components/providers/agentation-provider";
+import { LogoProvider } from "@/components/providers/logo-provider";
 
 const inter = Inter({
   variable: "--font-body",
@@ -39,11 +41,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch logo URL públicamente (service_role bypass RLS)
+  let logoSrc: string | null = null;
+  const srKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (srKey) {
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, srKey);
+    const { data } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "SITE_LOGO_URL")
+      .maybeSingle();
+    if (data?.value) logoSrc = data.value;
+  }
+
   return (
     <html
       lang="es"
@@ -51,7 +66,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[#0E0E10] font-body text-white antialiased md:pl-[72px] pb-16 md:pb-0" suppressHydrationWarning>
-        {children}
+        <LogoProvider src={logoSrc}>
+          {children}
+        </LogoProvider>
         <AgentationProvider />
       </body>
     </html>
