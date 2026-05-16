@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Handshake, Wrench, Building2, BookOpen, TrendingUp, Target, DollarSign, Shield } from "lucide-react";
+import { ArrowRight, Wrench, Handshake, Crown } from "lucide-react";
 import { PreviewCard } from "./preview-card";
 import { ScrollRow } from "./scroll-row";
 
@@ -13,19 +13,42 @@ interface ContentShowcaseProps {
 export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
   return (
     <section className="mx-auto max-w-[1200px] px-6 py-16 md:px-10">
-      {/* Fila 1: Crowdfunding — PRODUCTO ESTRELLA */}
+      {/* Fila 1: Mini Apps — PERFIL 1 (bodeguero) + PERFIL 2 (digital) */}
+      <div className="mb-12">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
+              <Wrench className="h-6 w-6 text-[#F26A2E]" />
+              Herramientas que te sacan de apuros
+            </h2>
+            <p className="mt-1 text-sm text-[#909296]">
+              Calcula, organiza y decide sin complicaciones.
+            </p>
+          </div>
+          <Link href="/tools" className="flex items-center gap-1 text-sm font-medium text-[#F26A2E] transition-colors hover:text-[#F26A2E]/80">
+            Ver todo <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <ScrollRow>
+          {tools.map((t: any) => (
+            <PreviewCard key={t.id ?? t.slug} type="tool" title={t.title} subtitle={t.type} href={`/tools/${t.slug}`} />
+          ))}
+        </ScrollRow>
+      </div>
+
+      {/* Fila 2: Crowdfunding — PERFIL 1 (bodeguero) */}
       <div className="mb-12">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-[#C4E27A]/10 px-3 py-1 text-xs font-medium text-[#C4E27A]">
-              🔥 Ahora en vivo
+              Proyectos activos
             </div>
             <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
               <Handshake className="h-6 w-6 text-[#C4E27A]" />
-              Crowdfunding — Proyectos del barrio
+              Apoya a otros kapitalistas
             </h2>
             <p className="mt-1 text-sm text-[#909296]">
-              Apoya y sé parte del crecimiento de tu comunidad
+              Tu aporte, por pequeño que sea, mueve el barrio.
             </p>
           </div>
           <Link href="/comunidad" className="flex items-center gap-1 text-sm font-medium text-[#C4E27A] transition-colors hover:text-[#C4E27A]/80">
@@ -53,56 +76,49 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
         </ScrollRow>
       </div>
 
-      {/* Fila 2: Mini Apps */}
-      <div className="mb-12">
-        <div className="mb-6 flex items-center justify-between">
+      {/* Fila 3: Battle Pass — PERFIL 3 (ambicioso) */}
+      <div className="rounded-[20px] bg-gradient-to-br from-[#1F3A2E] to-[#0E0E10] p-6 md:p-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
-              <Wrench className="h-6 w-6 text-[#F26A2E]" />
-              Mini Apps — Herramientas prácticas
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-[#F5C53D]/10 px-3 py-1 text-xs font-medium text-[#F5C53D]">
+              <Crown className="h-3.5 w-3.5" />
+          Para los que quieren más
+            </div>
+            <h2 className="text-xl font-bold text-white md:text-2xl">
+              Lleva tu negocio al siguiente nivel
             </h2>
-            <p className="mt-1 text-sm text-[#909296]">
-              Calculadoras, quizzes y wizards para tu negocio
+            <p className="mt-2 max-w-lg text-sm text-[#909296]">
+              Mentorías, herramientas premium, contenido exclusivo 
+              y protección para tu emprendimiento.
             </p>
+            <div className="mt-4 flex flex-wrap gap-6 text-sm">
+              {[
+                { label: "Mentorías con expertos", emoji: "🎓" },
+                { label: "Herramientas premium", emoji: "⚡" },
+                { label: "Contenido exclusivo", emoji: "🔒" },
+              ].map((f) => (
+                <div key={f.label} className="flex items-center gap-2">
+                  <span>{f.emoji}</span>
+                  <span className="text-[#909296]">{f.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <Link href="/tools" className="flex items-center gap-1 text-sm font-medium text-[#F26A2E] transition-colors hover:text-[#F26A2E]/80">
-            Ver todo <ArrowRight className="h-4 w-4" />
+          <Link
+            href="/"
+            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-all hover:bg-[#F5C53D]/90 active:scale-[0.97]"
+          >
+            Conoce el Battle Pass <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <ScrollRow>
-          {tools.map((t: any) => (
-            <PreviewCard key={t.id ?? t.slug} type="tool" title={t.title} subtitle={t.type} href={`/tools/${t.slug}`} />
-          ))}
-        </ScrollRow>
       </div>
 
-      {/* Fila 3: Próximamente — Cursos + Apps Empresa */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-[20px] border border-dashed border-white/10 bg-[#141416] p-6 transition-all hover:border-[#F26A2E]/30">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#F26A2E]/10">
-            <BookOpen className="h-6 w-6 text-[#F26A2E]" />
-          </div>
-          <h3 className="text-lg font-bold text-white">📚 Cursos</h3>
-          <p className="mt-1 text-sm text-[#909296]">
-            Educación financiera con los maestros del barrio. Próximamente.
-          </p>
-          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#F5C53D]/10 px-3 py-1 text-xs font-medium text-[#F5C53D]">
-            🚧 Próximamente
-          </div>
-        </div>
-
-        <div className="rounded-[20px] border border-dashed border-white/10 bg-[#141416] p-6 transition-all hover:border-[#F26A2E]/30">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#F5C53D]/10">
-            <Building2 className="h-6 w-6 text-[#F5C53D]" />
-          </div>
-          <h3 className="text-lg font-bold text-white">🏢 Apps para empresas</h3>
-          <p className="mt-1 text-sm text-[#909296]">
-            Control de caja, reportes y herramientas para tu equipo. Muy pronto.
-          </p>
-          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#F5C53D]/10 px-3 py-1 text-xs font-medium text-[#F5C53D]">
-            🚧 Próximamente
-          </div>
-        </div>
+      {/* Banner sutíl: Próximamente */}
+      <div className="mt-12 rounded-[12px] border border-white/5 bg-[#141416] px-4 py-3 text-center">
+        <p className="text-sm text-[#909296]">
+          📚 Cursos y apps para empresas están en camino. 
+          <span className="text-[#F26A2E]"> Muy pronto.</span>
+        </p>
       </div>
     </section>
   );
