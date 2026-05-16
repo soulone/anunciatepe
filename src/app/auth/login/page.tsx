@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { SiteLogo } from "@/components/shared/site-logo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -54,9 +55,12 @@ export default function LoginPage() {
         <div className="mb-8 text-center">
           <Link
             href="/"
-            className="font-sans text-3xl font-bold tracking-tight text-white"
+            className="flex flex-col items-center gap-2"
           >
-            Kapitalizando
+            <SiteLogo />
+            <span className="font-heading text-2xl font-bold tracking-tight text-[#F26A2E]">
+              Kapitalizando
+            </span>
           </Link>
           <p className="mt-2 text-sm text-[#A8AAAE]">
             Inicia sesi&oacute;n en tu cuenta
