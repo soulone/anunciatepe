@@ -14,7 +14,7 @@ import { ProgressBar } from "@/components/shared/progress-bar";
 import { Bell, Play, Plus, BookOpen, TrendingUp, Calendar, Clock, Users, Info, Volume2 } from "lucide-react";
 import { CheckoutButton } from "@/components/payments/checkout-button";
 import { LandingHero } from "@/components/landing/landing-hero";
-import { LandingBenefits } from "@/components/landing/landing-benefits";
+import { ContentShowcase } from "@/components/landing/content-showcase";
 import { LandingTestimonials } from "@/components/landing/landing-testimonials";
 
 function formatDuration(min: number): string {
@@ -41,7 +41,17 @@ export default async function Home() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Landing page para usuarios NO logueados
+  // Landing: datos de vista previa (para no logueados)
+  const [
+    { data: previewCourses },
+    { data: previewProjects },
+    { data: previewTools },
+  ] = await Promise.all([
+    supabase.from("courses").select("title, slug, category").eq("is_published", true).limit(8),
+    supabase.from("projects").select("*").in("status", ["active", "funded"]).order("raised_amount", { ascending: false }).limit(3),
+    supabase.from("tools").select("title, slug, type, color_theme").eq("is_published", true).limit(8),
+  ]);
+
   if (!user) {
     return (
       <>
@@ -54,7 +64,7 @@ export default async function Home() {
             </div>
           </div>
           <LandingHero />
-          <LandingBenefits />
+          <ContentShowcase courses={previewCourses ?? []} projects={previewProjects ?? []} tools={previewTools ?? []} />
           <LandingTestimonials />
           <Footer />
         </div>
@@ -62,8 +72,9 @@ export default async function Home() {
     );
   }
 
+  // ─── DASHBOARD (logueado) ─────────────────────────────────
   const [
-    { data: liveHero },
+    { data: dashLiveHero },
     { data: recordings },
     { data: courses },
     { data: tools },
@@ -84,7 +95,7 @@ export default async function Home() {
     supabase.from("products").select("*").eq("is_active", true).order("sort_order"),
   ]);
 
-  const hero = liveHero ?? null;
+  const hero = dashLiveHero ?? null;
   const safeRecordings = recordings ?? [];
   const safeCourses = courses ?? [];
   const safeTools = tools ?? [];
