@@ -41,14 +41,14 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-[#C4E27A]/10 px-3 py-1 text-xs font-medium text-[#C4E27A]">
-              Proyectos activos
+              Inversión colectiva
             </div>
             <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
               <Handshake className="h-6 w-6 text-[#C4E27A]" />
-              Apoya a otros kapitalistas
+              Invierte junto a otros kapitalistas
             </h2>
             <p className="mt-1 text-sm text-[#909296]">
-              Tu aporte, por pequeño que sea, mueve el barrio.
+              Asíociate a proyectos de tu comunidad y sé parte del negocio.
             </p>
           </div>
           <Link href="/auth/register" className="flex items-center gap-1 text-sm font-medium text-[#C4E27A] transition-colors hover:text-[#C4E27A]/80">

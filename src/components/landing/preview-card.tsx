@@ -35,7 +35,7 @@ export function PreviewCard({ type, title, subtitle, href, progress, raised, goa
           </>
         )}
         <div className="mt-3 flex items-center gap-1 text-xs font-medium text-[#C4E27A] opacity-0 transition-opacity group-hover:opacity-100">
-          Apoyar proyecto <ArrowRight className="h-3 w-3" />
+          Invertir en este proyecto <ArrowRight className="h-3 w-3" />
         </div>
       </Link>
     );
