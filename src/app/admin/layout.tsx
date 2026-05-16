@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { LayoutDashboard, BookOpen, Radio, Wrench, BookText, Film, LogOut, Moon, Sun, CreditCard, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SiteLogo } from "@/components/shared/site-logo";
 
 const ADMIN_NAV = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
@@ -56,12 +57,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-[#0E0E10] text-white">
       <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[72px] flex-col items-center gap-4 bg-[#0E0E10] py-4 md:flex">
-        <Link href="/" className="flex h-6 w-6 items-center justify-center">
-          <div className="grid grid-cols-3 gap-[2px]">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="h-1.5 w-1.5 rounded-full bg-[#F5C53D]" />
-            ))}
-          </div>
+        <Link href="/" className="flex h-10 w-10 items-center justify-center">
+          <SiteLogo />
         </Link>
 
         <nav className="flex flex-col items-center gap-4">

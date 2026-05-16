@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { SiteLogo } from "@/components/shared/site-logo";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -116,13 +117,7 @@ export function Sidebar() {
     <>
       {/* Desktop sidebar */}
       <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[72px] flex-col items-center gap-4 bg-[#0E0E10] py-4 md:flex">
-        <div className="flex h-6 w-6 items-center justify-center">
-          <div className="grid grid-cols-3 gap-[2px]">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="h-1.5 w-1.5 rounded-full bg-[#F5C53D]" />
-            ))}
-          </div>
-        </div>
+        <SiteLogo />
 
         <nav className="flex flex-col items-center gap-4">
           {NAV_ITEMS.map((item) => {
@@ -250,11 +245,7 @@ export function Sidebar() {
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
         <div className="flex items-center gap-2">
-          <div className="grid grid-cols-3 gap-[2px]">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="h-1.5 w-1.5 rounded-full bg-[#F5C53D]" />
-            ))}
-          </div>
+          <SiteLogo />
           <span className="text-sm font-bold text-white">Kapitalizando</span>
         </div>
         <DropdownMenu>
