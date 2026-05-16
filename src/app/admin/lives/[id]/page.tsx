@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, Radio, Play, FileText, Calendar, Send } from "lucide-react";
+import { ArrowLeft, CheckCircle, Radio, Play, FileText, Calendar, Send, List } from "lucide-react";
 import { useParams } from "next/navigation";
 import { WizardLayout } from "@/components/admin/wizard-layout";
 import { ImageUpload } from "@/components/admin/image-upload";
@@ -87,8 +87,18 @@ export default function AdminLiveForm() {
         <h2 className="mt-6 text-2xl font-bold text-white">¡Live {isNew ? "creado" : "actualizado"} con éxito!</h2>
         <p className="mt-2 text-[#909296]">{title} ya está en la plataforma.</p>
         <div className="mt-8 flex flex-wrap gap-4">
-          <Link href={`/lives/${id}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">🔴 Ver live</Link>
-          <Link href="/admin/lives" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-colors hover:bg-[#F5C53D]/90 active:scale-[0.97]">📋 Ver todos</Link>
+          <Link href={`/lives/${id}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">
+            <Radio className="h-4 w-4" /> Ver live
+          </Link>
+          {status === "finished" && (
+            <Link href={`/admin/recordings/new?liveId=${id}&title=${encodeURIComponent(title)}`}
+              className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F04A8A] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F04A8A]/90 active:scale-[0.97]">
+              <Play className="h-4 w-4" /> Crear grabación
+            </Link>
+          )}
+          <Link href="/admin/lives" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-colors hover:bg-[#F5C53D]/90 active:scale-[0.97]">
+            <List className="h-4 w-4" /> Ver todos
+          </Link>
         </div>
       </div>
     );

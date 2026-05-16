@@ -27,8 +27,8 @@ export default function AdminReadingForm() {
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState("Finanzas básicas");
   const [excerpt, setExcerpt] = useState("");
-  const [content, setContent] = useState("");
   const [contentUrl, setContentUrl] = useState("");
+  const [durationMin, setDurationMin] = useState(5);
   const [isPublished, setIsPublished] = useState(true);
 
   useEffect(() => {
@@ -39,14 +39,13 @@ export default function AdminReadingForm() {
           setAuthor(data.author ?? "");
           setCategory(data.category ?? "Finanzas básicas");
           setExcerpt(data.excerpt ?? "");
-          setContent(data.content ?? "");
+          setContentUrl(data.content_url ?? "");
+          setDurationMin(data.duration_min ?? 5);
           setIsPublished(data.is_published);
         }
       });
     }
   }, [id]);
-
-  const durationMin = Math.max(1, Math.ceil((content.length / 800) * 5));
 
   async function handleSave() {
     setSaving(true);
@@ -55,7 +54,6 @@ export default function AdminReadingForm() {
       slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
       author,
       excerpt,
-      content,
       content_url: contentUrl || null,
       duration_min: durationMin,
       category,
@@ -160,16 +158,15 @@ export default function AdminReadingForm() {
                 className="w-full rounded-[12px] bg-white/5 px-4 py-3 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30 resize-none" />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm text-[#909296]">Contenido completo</label>
-              <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={10}
-                className="w-full rounded-[12px] bg-white/5 px-4 py-3 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30 resize-none font-mono" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm text-[#909296]">URL del contenido (opcional)</label>
+              <label className="mb-1.5 block text-sm text-[#909296]">URL del contenido</label>
               <input value={contentUrl} onChange={(e) => setContentUrl(e.target.value)} placeholder="https://drive.google.com/file/d/..."
                 className="h-12 w-full rounded-[12px] bg-white/5 px-4 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30" />
             </div>
-            <p className="text-xs text-[#909296]">Tiempo estimado de lectura: {durationMin} min</p>
+            <div>
+              <label className="mb-1.5 block text-sm text-[#909296]">Duración estimada (min)</label>
+              <input type="number" value={durationMin} onChange={(e) => setDurationMin(Number(e.target.value))} min={1}
+                className="h-12 w-full max-w-[200px] rounded-[12px] bg-white/5 px-4 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50" />
+            </div>
           </div>
         )}
 
