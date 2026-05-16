@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, Radio } from "lucide-react";
+import { ArrowLeft, CheckCircle, Radio, Play } from "lucide-react";
 import { useParams } from "next/navigation";
 import { WizardLayout } from "@/components/admin/wizard-layout";
+import { ImageUpload } from "@/components/admin/image-upload";
 
 const STEPS = [
   { icon: "📝", title: "Info" },
@@ -32,6 +33,7 @@ export default function AdminLiveForm() {
   const [status, setStatus] = useState("scheduled");
   const [preregisteredCount, setPreregisteredCount] = useState(0);
   const [streamUrl, setStreamUrl] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isNew) {
@@ -46,6 +48,7 @@ export default function AdminLiveForm() {
           setStatus(data.status ?? "scheduled");
           setPreregisteredCount(data.preregistered_count ?? 0);
           setStreamUrl(data.stream_url ?? "");
+          setThumbnailUrl(data.thumbnail_url ?? null);
         }
       });
     }
@@ -63,6 +66,7 @@ export default function AdminLiveForm() {
       status,
       preregistered_count: preregisteredCount,
       stream_url: streamUrl || null,
+      thumbnail_url: thumbnailUrl,
     };
 
     if (isNew) {
@@ -82,9 +86,9 @@ export default function AdminLiveForm() {
         </div>
         <h2 className="mt-6 text-2xl font-bold text-white">¡Live {isNew ? "creado" : "actualizado"} con éxito!</h2>
         <p className="mt-2 text-[#909296]">{title} ya está en la plataforma.</p>
-        <div className="mt-8 flex gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
+          <Link href={`/lives/${id}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">🔴 Ver live</Link>
           <Link href="/admin/lives" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-colors hover:bg-[#F5C53D]/90 active:scale-[0.97]">📋 Ver todos</Link>
-          <Link href="/admin/lives/new" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white transition-colors hover:bg-[#F26A2E]/90 active:scale-[0.97]">➕ Crear otro</Link>
         </div>
       </div>
     );
@@ -129,6 +133,7 @@ export default function AdminLiveForm() {
                 placeholder="Describe de qué tratará el live..."
                 className="w-full rounded-[12px] bg-white/5 px-4 py-3 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30 resize-none" />
             </div>
+            <ImageUpload currentUrl={thumbnailUrl} folder="lives" onUpload={setThumbnailUrl} onDelete={() => setThumbnailUrl(null)} aspectRatio="16:9" label="Poster del live" />
           </div>
         )}
 
