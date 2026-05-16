@@ -75,7 +75,7 @@ export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
-  const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
+  const [user, setUser] = useState<{ email?: string; name?: string; avatar?: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { isLight, toggle: toggleTheme } = useTheme();
@@ -86,6 +86,7 @@ export function Sidebar() {
         setUser({
           email: data.user.email,
           name: data.user.user_metadata?.full_name ?? data.user.email,
+          avatar: data.user.user_metadata?.avatar_url,
         });
         const { data: profile } = await supabase
           .from("profiles")
@@ -169,9 +170,14 @@ export function Sidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger className="flex flex-col items-center gap-1 outline-none">
                 <Avatar className="h-9 w-9 ring-2 ring-[#F04A8A]/30 transition-all hover:ring-[#F04A8A]/60">
-                  <AvatarFallback className="bg-[#F04A8A]/20 text-xs font-semibold text-[#F04A8A]">
-                    {initials}
-                  </AvatarFallback>
+                  {user?.avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={user.avatar} alt="" className="h-full w-full rounded-full object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-[#F04A8A]/20 text-xs font-semibold text-[#F04A8A]">
+                      {initials}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -251,9 +257,14 @@ export function Sidebar() {
         <DropdownMenu>
           <DropdownMenuTrigger className="outline-none">
             <Avatar className="h-8 w-8 ring-2 ring-[#F04A8A]/30">
-              <AvatarFallback className="bg-[#F04A8A]/20 text-[10px] font-semibold text-[#F04A8A]">
-                {initials}
-              </AvatarFallback>
+              {user?.avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.avatar} alt="" className="h-full w-full rounded-full object-cover" />
+              ) : (
+                <AvatarFallback className="bg-[#F04A8A]/20 text-[10px] font-semibold text-[#F04A8A]">
+                  {initials}
+                </AvatarFallback>
+              )}
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent

@@ -11,11 +11,12 @@ import { PathCard } from "@/components/learning-path/path-card";
 import { RankCard } from "@/components/ranking/rank-card";
 import { StatsBar } from "@/components/community/stats-bar";
 import { ProgressBar } from "@/components/shared/progress-bar";
-import { Bell, Play, Plus, BookOpen, TrendingUp, Calendar, Clock, Users, Info, Volume2 } from "lucide-react";
+import { Bell, Play, BookOpen, TrendingUp, Calendar, Clock, Users, Info, Volume2 } from "lucide-react";
 import { CheckoutButton } from "@/components/payments/checkout-button";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { ContentShowcase } from "@/components/landing/content-showcase";
 import { LandingTestimonials } from "@/components/landing/landing-testimonials";
+import { SiteLogo } from "@/components/shared/site-logo";
 
 function formatDuration(min: number): string {
   if (!min) return "—";
@@ -52,7 +53,10 @@ export default async function Home() {
       <>
         <div className="min-h-full bg-[#0E0E10] font-body text-white antialiased">
           <div className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between bg-[#0E0E10]/80 px-6 py-4 backdrop-blur-sm md:px-10">
+          <div className="flex items-center gap-2">
+            <SiteLogo />
             <span className="font-heading text-xl font-bold text-[#F26A2E]">KAPITALIZANDO</span>
+          </div>
             <div className="flex items-center gap-3">
               <a href="/auth/login" className="text-sm text-[#909296] transition-colors hover:text-white">Iniciar sesión</a>
               <a href="/auth/register" className="inline-flex h-9 items-center gap-2 rounded-full bg-[#F26A2E] px-5 text-sm font-bold text-white transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">Empieza gratis</a>
@@ -115,9 +119,6 @@ export default async function Home() {
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F04A8A]/10 text-[#F04A8A]">
                 <Bell className="h-4 w-4" />
               </div>
-              <button className="inline-flex h-9 items-center gap-2 rounded-full bg-[#F5C53D] px-4 text-sm font-bold text-[#101012] transition-all hover:bg-[#F5C53D]/90">
-                <Plus className="h-4 w-4" /> Nuevo
-              </button>
             </div>
           </div>
 
