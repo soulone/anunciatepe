@@ -90,10 +90,13 @@ export function Sidebar() {
         });
         const { data: profile } = await supabase
           .from("profiles")
-          .select("is_admin")
+          .select("is_admin, avatar_url")
           .eq("id", data.user.id)
           .single();
         setIsAdmin(profile?.is_admin ?? false);
+        if (profile?.avatar_url) {
+          setUser((prev) => ({ ...prev!, avatar: profile.avatar_url }));
+        }
       }
     });
   }, [supabase]);
@@ -172,7 +175,7 @@ export function Sidebar() {
                 <Avatar className="h-9 w-9 ring-2 ring-[#F04A8A]/30 transition-all hover:ring-[#F04A8A]/60">
                   {user?.avatar ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={user.avatar} alt="" className="h-full w-full rounded-full object-cover" />
+                    <img src={user.avatar} alt="" referrerPolicy="no-referrer" className="h-full w-full rounded-full object-cover" />
                   ) : (
                     <AvatarFallback className="bg-[#F04A8A]/20 text-xs font-semibold text-[#F04A8A]">
                       {initials}
@@ -259,7 +262,7 @@ export function Sidebar() {
             <Avatar className="h-8 w-8 ring-2 ring-[#F04A8A]/30">
               {user?.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={user.avatar} alt="" className="h-full w-full rounded-full object-cover" />
+                <img src={user.avatar} alt="" referrerPolicy="no-referrer" className="h-full w-full rounded-full object-cover" />
               ) : (
                 <AvatarFallback className="bg-[#F04A8A]/20 text-[10px] font-semibold text-[#F04A8A]">
                   {initials}
