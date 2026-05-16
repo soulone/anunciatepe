@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export function SiteLogo({ className = "" }: { className?: string }) {
+  const [mounted, setMounted] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setMounted(true);
     const supabase = createClient();
     supabase
       .from("settings")
@@ -20,10 +22,16 @@ export function SiteLogo({ className = "" }: { className?: string }) {
       });
   }, []);
 
-  if (loading) {
-    return <div className={`flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#F26A2E]/10 ${className}`}>
+  const placeholder = (
+    <div className={`flex h-10 w-10 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#F26A2E]/20 to-[#F5C53D]/10 ${className}`}>
       <span className="font-heading text-lg font-bold text-[#F26A2E]">K</span>
-    </div>;
+    </div>
+  );
+
+  if (!mounted) return placeholder;
+
+  if (loading) {
+    return placeholder;
   }
 
   if (logoUrl) {
@@ -39,9 +47,5 @@ export function SiteLogo({ className = "" }: { className?: string }) {
     );
   }
 
-  return (
-    <div className={`flex h-10 w-10 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#F26A2E]/20 to-[#F5C53D]/10 ${className}`}>
-      <span className="font-heading text-lg font-bold text-[#F26A2E]">K</span>
-    </div>
-  );
+  return placeholder;
 }
