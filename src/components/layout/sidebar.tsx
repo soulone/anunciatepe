@@ -160,7 +160,7 @@ export function Sidebar() {
             >
               {isLight ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
-            <span className="absolute left-full ml-3 whitespace-nowrap rounded-[8px] bg-[#17181B] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 pointer-events-none z-50">
+            <span suppressHydrationWarning className="absolute left-full ml-3 whitespace-nowrap rounded-[8px] bg-[#17181B] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 pointer-events-none z-50">
               {isLight ? "Modo oscuro" : "Modo claro"}
             </span>
           </div>
