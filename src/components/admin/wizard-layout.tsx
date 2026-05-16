@@ -1,10 +1,10 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { Check } from "lucide-react";
+import { Check, ArrowRight, Save, ArrowLeft } from "lucide-react";
 
 interface Step {
-  icon: string;
+  icon: ReactNode;
   title: string;
 }
 
@@ -30,14 +30,13 @@ export function WizardLayout({
   onNext,
   isFirst,
   isLast,
-  nextLabel = "Siguiente →",
-  backLabel = "← Atrás",
+  nextLabel = "Siguiente",
+  backLabel = "Atrás",
   onFinish,
   loading,
 }: WizardLayoutProps) {
   return (
     <div>
-      {/* Progress bar */}
       <div className="mb-8">
         <div className="flex items-center gap-2">
           {steps.map((step, i) => (
@@ -66,39 +65,31 @@ export function WizardLayout({
         </div>
       </div>
 
-      {/* Content */}
       <div className="card-dark rounded-[24px] p-6 md:p-8">
         {children}
       </div>
 
-      {/* Navigation */}
-      {!isFirst && (
-        <div className="mt-6 flex items-center justify-between">
-          <button
-            onClick={onBack}
-            disabled={loading}
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-white/10 px-6 text-sm font-medium text-white transition-colors hover:bg-white/20 disabled:opacity-50 active:scale-[0.97]"
-          >
-            {backLabel}
+      <div className="mt-6 flex items-center justify-between">
+        {!isFirst ? (
+          <button onClick={onBack} disabled={loading}
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-white/10 px-6 text-sm font-medium text-white transition-colors hover:bg-white/20 disabled:opacity-50 active:scale-[0.97]">
+            <ArrowLeft className="h-4 w-4" /> {backLabel}
           </button>
-          {isLast ? (
-            <button
-              onClick={onFinish}
-              disabled={loading}
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 disabled:opacity-50 active:scale-[0.97]"
-            >
-              {loading ? "Guardando..." : "🚀 Crear"}
-            </button>
-          ) : (
-            <button
-              onClick={onNext}
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]"
-            >
-              {nextLabel}
-            </button>
-          )}
-        </div>
-      )}
+        ) : (
+          <div />
+        )}
+        {isLast ? (
+          <button onClick={onFinish} disabled={loading}
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 disabled:opacity-50 active:scale-[0.97]">
+            <Save className="h-4 w-4" /> {loading ? "Guardando..." : "Guardar"}
+          </button>
+        ) : (
+          <button onClick={onNext}
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">
+            {nextLabel} <ArrowRight className="h-4 w-4" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

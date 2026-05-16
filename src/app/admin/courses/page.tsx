@@ -3,24 +3,41 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Plus, Edit, ExternalLink, BookOpen, Clock } from "lucide-react";
+import { Plus, Edit, ExternalLink, BookOpen, Clock, Trash2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 
 export default function AdminCourses() {
   const supabase = createClient();
   const [courses, setCourses] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    supabase.from("courses").select("*, chapters!left(duration)").order("created_at", { ascending: false }).then(({ data }) => {
-      if (data) {
-        const withDuration = data.map((c: any) => {
-          const totalMin = (c.chapters ?? []).reduce((s: number, ch: any) => s + (ch.duration ?? 0), 0);
-          return { ...c, total_duration: totalMin };
-        });
-        setCourses(withDuration);
-      }
-    });
-  }, [supabase]);
+  useEffect(() => { loadCourses(); }, [supabase]);
+
+  async function loadCourses() {
+    setLoading(true);
+    const { data } = await supabase.from("courses").select("*, chapters!left(duration)").order("created_at", { ascending: false });
+    if (data) {
+      const withDuration = data.map((c: any) => {
+        const totalMin = (c.chapters ?? []).reduce((s: number, ch: any) => s + (ch.duration ?? 0), 0);
+        return { ...c, total_duration: totalMin };
+      });
+      setCourses(withDuration);
+    }
+    setLoading(false);
+  }
+
+  async function deleteHandler() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    await supabase.from("chapters").delete().eq("course_id", deleteTarget.id);
+    await supabase.from("courses").delete().eq("id", deleteTarget.id);
+    setDeleting(false);
+    setDeleteTarget(null);
+    loadCourses();
+  }
 
   const filtered = courses.filter((c) =>
     c.title.toLowerCase().includes(search.toLowerCase())
@@ -88,16 +105,30 @@ export default function AdminCourses() {
                   className="flex h-8 w-8 items-center justify-center rounded-xl text-[#909296] transition-colors hover:bg-white/10 hover:text-white">
                   <Edit className="h-3.5 w-3.5" />
                 </Link>
+                <button onClick={() => setDeleteTarget(course)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl text-[#909296] transition-colors hover:bg-red-500/10 hover:text-red-400">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
               </div>
             </div>
           );
         })}
-        {filtered.length === 0 && (
+        {loading && <p className="py-8 text-center text-sm text-[#909296]">Cargando...</p>}
+        {!loading && filtered.length === 0 && (
           <p className="py-8 text-center text-sm text-[#909296]">
             {courses.length === 0 ? "No hay cursos aún. Crea el primero." : "Sin resultados."}
           </p>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Eliminar curso"
+        message={`¿Estás seguro de eliminar "${deleteTarget?.title}"? Se eliminarán también sus capítulos.`}
+        onConfirm={deleteHandler}
+        onCancel={() => setDeleteTarget(null)}
+        loading={deleting}
+      />
     </>
   );
 }

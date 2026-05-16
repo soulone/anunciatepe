@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, BookOpen } from "lucide-react";
+import { ArrowLeft, CheckCircle, BookOpen, FileText, Edit3, Eye, List, Plus } from "lucide-react";
 import { WizardLayout } from "@/components/admin/wizard-layout";
 
 const STEPS = [
-  { icon: "📝", title: "Info" },
-  { icon: "✍️", title: "Contenido" },
-  { icon: "👀", title: "Publicar" },
+  { icon: <FileText className="h-4 w-4" />, title: "Info" },
+  { icon: <Edit3 className="h-4 w-4" />, title: "Contenido" },
+  { icon: <Eye className="h-4 w-4" />, title: "Publicar" },
 ];
 
 export default function AdminReadingForm() {
@@ -28,6 +28,7 @@ export default function AdminReadingForm() {
   const [category, setCategory] = useState("Finanzas básicas");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
+  const [contentUrl, setContentUrl] = useState("");
   const [isPublished, setIsPublished] = useState(true);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function AdminReadingForm() {
       author,
       excerpt,
       content,
+      content_url: contentUrl || null,
       duration_min: durationMin,
       category,
       is_published: isPublished,
@@ -71,6 +73,7 @@ export default function AdminReadingForm() {
   }
 
   if (saved) {
+    const readingSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#C4E27A]/10">
@@ -78,12 +81,15 @@ export default function AdminReadingForm() {
         </div>
         <h2 className="mt-6 text-2xl font-bold text-white">¡Lectura publicada con éxito!</h2>
         <p className="mt-2 text-[#909296]">{title} ya está disponible para los kapitalistas.</p>
-        <div className="mt-8 flex gap-4">
-          <Link href="/admin/readings" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-colors hover:bg-[#F5C53D]/90 active:scale-[0.97]">
-            📋 Ver todas
+        <div className="mt-8 flex flex-wrap gap-4">
+          <Link href={`/readings/${readingSlug}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#F26A2E]/90 active:scale-[0.97]">
+            <Eye className="h-4 w-4" /> Ver lectura
           </Link>
-          <Link href="/admin/readings/new" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F26A2E] px-6 text-sm font-bold text-white transition-colors hover:bg-[#F26A2E]/90 active:scale-[0.97]">
-            ➕ Crear otra
+          <Link href="/admin/readings" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-colors hover:bg-[#F5C53D]/90 active:scale-[0.97]">
+            <List className="h-4 w-4" /> Ver todas
+          </Link>
+          <Link href="/admin/readings/new" className="inline-flex h-11 items-center gap-2 rounded-full bg-white/10 px-6 text-sm font-medium text-white transition-colors hover:bg-white/20 active:scale-[0.97]">
+            <Plus className="h-4 w-4" /> Crear otra
           </Link>
         </div>
       </div>
@@ -158,7 +164,12 @@ export default function AdminReadingForm() {
               <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={10}
                 className="w-full rounded-[12px] bg-white/5 px-4 py-3 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30 resize-none font-mono" />
             </div>
-            <p className="text-xs text-[#909296]">⏱ Tiempo estimado de lectura: {durationMin} min</p>
+            <div>
+              <label className="mb-1.5 block text-sm text-[#909296]">URL del contenido (opcional)</label>
+              <input value={contentUrl} onChange={(e) => setContentUrl(e.target.value)} placeholder="https://drive.google.com/file/d/..."
+                className="h-12 w-full rounded-[12px] bg-white/5 px-4 text-sm text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30" />
+            </div>
+            <p className="text-xs text-[#909296]">Tiempo estimado de lectura: {durationMin} min</p>
           </div>
         )}
 

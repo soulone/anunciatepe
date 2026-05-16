@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Plus, Save, CheckCircle } from "lucide-react";
 import Link from "next/link";
@@ -9,7 +9,6 @@ import { ImageUpload } from "@/components/admin/image-upload";
 
 export default function AdminCourseForm() {
   const { id } = useParams();
-  const router = useRouter();
   const supabase = createClient();
   const isNew = id === "new";
 
@@ -22,7 +21,7 @@ export default function AdminCourseForm() {
   const [price, setPrice] = useState(0);
   const [isPublished, setIsPublished] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-  const [chapters, setChapters] = useState<{ title: string; duration: number; is_free: boolean }[]>([]);
+  const [chapters, setChapters] = useState<{ title: string; description?: string; video_url?: string; duration: number; is_free: boolean }[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -68,26 +67,37 @@ export default function AdminCourseForm() {
       is_published: isPublished,
     };
 
+    let courseId = id as string;
     if (isNew) {
-      const { error } = await supabase.from("courses").insert(payload);
-      if (!error) setSaved(true);
-      else alert(error.message);
+      const { data, error } = await supabase.from("courses").insert(payload).select("id").single();
+      if (error) { alert(error.message); setSaving(false); return; }
+      courseId = data.id;
     } else {
-      const { error } = await supabase.from("courses").update(payload).eq("id", id);
-      if (!error) setSaved(true);
-      else alert(error.message);
+      const { error } = await supabase.from("courses").update(payload).eq("id", courseId);
+      if (error) { alert(error.message); setSaving(false); return; }
     }
+
+    for (let i = 0; i < chapters.length; i++) {
+      const ch = chapters[i];
+      if ((ch as any).id) {
+        await supabase.from("chapters").update({ title: ch.title, description: ch.description, video_url: ch.video_url, duration: ch.duration, is_free: ch.is_free }).eq("id", (ch as any).id);
+      } else {
+        await supabase.from("chapters").insert({ course_id: courseId, title: ch.title, description: ch.description, video_url: ch.video_url, duration: ch.duration, order_index: i + 1, is_free: ch.is_free });
+      }
+    }
+
     setSaving(false);
+    setSaved(true);
   }
 
   async function addChapter() {
-    const newChapter = { title: "Nuevo capítulo", duration: 0, is_free: false };
+    const newChapter: { title: string; description?: string; video_url?: string; duration: number; is_free: boolean } = { title: "Nuevo capítulo", description: "", video_url: "", duration: 0, is_free: false };
     if (isNew) {
       setChapters([...chapters, newChapter]);
       return;
     }
     const { data } = await supabase.from("chapters").insert({
-      course_id: id, title: "Nuevo capítulo", duration: 0, order_index: chapters.length + 1, is_free: false,
+      course_id: id, title: "Nuevo capítulo", description: "", video_url: "", duration: 0, order_index: chapters.length + 1, is_free: false,
     }).select().single();
     if (data) setChapters([...chapters, data]);
   }
@@ -157,21 +167,33 @@ export default function AdminCourseForm() {
             </div>
             <div className="space-y-2">
               {chapters.map((ch, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-[12px] bg-white/5 p-3">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-xs text-[#909296]">{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <input value={ch.title} onChange={(e) => {
-                      const copy = [...chapters]; copy[i] = { ...copy[i], title: e.target.value }; setChapters(copy);
-                    }} className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[#909296]/50" />
+                <div key={i} className="space-y-2 rounded-[12px] bg-white/5 p-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs text-[#909296]">{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <input value={ch.title} onChange={(e) => {
+                        const copy = [...chapters]; copy[i] = { ...copy[i], title: e.target.value }; setChapters(copy);
+                      }} className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[#909296]/50" />
+                    </div>
+                    <input type="number" value={ch.duration} onChange={(e) => {
+                      const copy = [...chapters]; copy[i] = { ...copy[i], duration: Number(e.target.value) }; setChapters(copy);
+                    }} className="h-8 w-16 rounded-[8px] bg-white/10 px-2 text-xs text-white outline-none text-center" placeholder="min" />
+                    <button type="button" onClick={() => {
+                      const copy = [...chapters]; copy[i] = { ...copy[i], is_free: !copy[i].is_free }; setChapters(copy);
+                    }} className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${ch.is_free ? "bg-[#C4E27A]/20 text-[#C4E27A]" : "bg-white/10 text-[#909296]"}`}>
+                      {ch.is_free ? "Gratis" : "Premium"}
+                    </button>
                   </div>
-                  <input type="number" value={ch.duration} onChange={(e) => {
-                    const copy = [...chapters]; copy[i] = { ...copy[i], duration: Number(e.target.value) }; setChapters(copy);
-                  }} className="h-8 w-16 rounded-[8px] bg-white/10 px-2 text-xs text-white outline-none text-center" placeholder="min" />
-                  <button type="button" onClick={() => {
-                    const copy = [...chapters]; copy[i] = { ...copy[i], is_free: !copy[i].is_free }; setChapters(copy);
-                  }} className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${ch.is_free ? "bg-[#C4E27A]/20 text-[#C4E27A]" : "bg-white/10 text-[#909296]"}`}>
-                    {ch.is_free ? "Gratis" : "Premium"}
-                  </button>
+                  <div className="ml-9 space-y-2">
+                    <textarea value={ch.description ?? ""} onChange={(e) => {
+                      const copy = [...chapters]; copy[i] = { ...copy[i], description: e.target.value }; setChapters(copy);
+                    }} rows={2} placeholder="Descripción del capítulo (opcional)"
+                      className="w-full rounded-[8px] bg-white/5 px-3 py-2 text-xs text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30 resize-none" />
+                    <input value={ch.video_url ?? ""} onChange={(e) => {
+                      const copy = [...chapters]; copy[i] = { ...copy[i], video_url: e.target.value }; setChapters(copy);
+                    }} placeholder="https://drive.google.com/file/d/..."
+                      className="h-8 w-full rounded-[8px] bg-white/5 px-3 text-xs text-white outline-none focus:ring-1 focus:ring-[#F26A2E]/50 placeholder:text-[#909296]/30" />
+                  </div>
                 </div>
               ))}
               {chapters.length === 0 && <p className="py-4 text-center text-xs text-[#909296]">Sin capítulos todavía</p>}

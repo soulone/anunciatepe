@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Save, CheckCircle, CreditCard, Plus } from "lucide-react";
 
 export default function AdminPlanForm() {
   const { id } = useParams();
-  const router = useRouter();
   const supabase = createClient();
   const isNew = id === "new";
 
@@ -20,6 +19,7 @@ export default function AdminPlanForm() {
   const [interval_, setInterval_] = useState("month");
   const [isActive, setIsActive] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (!isNew) {
@@ -49,7 +49,27 @@ export default function AdminPlanForm() {
       await supabase.from("products").update(payload).eq("id", id);
     }
     setSaving(false);
-    router.push("/admin/plans");
+    setSaved(true);
+  }
+
+  if (saved) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#C4E27A]/10">
+          <CheckCircle className="h-10 w-10 text-[#C4E27A]" />
+        </div>
+        <h2 className="mt-6 text-2xl font-bold text-white">Plan {isNew ? "creado" : "actualizado"}</h2>
+        <p className="mt-2 text-[#A8AAAE]">{name} ya est&aacute; disponible en la plataforma.</p>
+        <div className="mt-8 flex flex-wrap gap-4">
+          <Link href="/admin/plans" className="inline-flex h-11 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#101012] shadow-lg transition-all hover:bg-[#F5C53D]/90 active:scale-[0.97]">
+            <CreditCard className="h-4 w-4" /> Ver planes
+          </Link>
+          <Link href="/admin/plans/new" className="inline-flex h-11 items-center gap-2 rounded-full bg-white/10 px-6 text-sm font-bold text-white transition-colors hover:bg-white/20 active:scale-[0.97]">
+            <Plus className="h-4 w-4" /> Crear otro
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (

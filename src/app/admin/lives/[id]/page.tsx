@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, Radio, Play } from "lucide-react";
+import { ArrowLeft, CheckCircle, Radio, Play, FileText, Calendar, Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { WizardLayout } from "@/components/admin/wizard-layout";
 import { ImageUpload } from "@/components/admin/image-upload";
 
 const STEPS = [
-  { icon: "📝", title: "Info" },
-  { icon: "📅", title: "Fecha" },
-  { icon: "🚀", title: "Publicar" },
+  { icon: <FileText className="h-4 w-4" />, title: "Info" },
+  { icon: <Calendar className="h-4 w-4" />, title: "Fecha" },
+  { icon: <Send className="h-4 w-4" />, title: "Publicar" },
 ];
 
 export default function AdminLiveForm() {

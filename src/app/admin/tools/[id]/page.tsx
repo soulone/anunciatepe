@@ -4,22 +4,22 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, Wrench, FileText, Target, Brain, Route, Hash } from "lucide-react";
+import { ArrowLeft, CheckCircle, Wrench, FileText, Palette, Settings } from "lucide-react";
 import { WizardLayout } from "@/components/admin/wizard-layout";
 import { ColorPicker } from "@/components/admin/color-picker";
 
 const STEPS = [
-  { icon: "📝", title: "Nombre" },
-  { icon: "🎨", title: "Tipo y color" },
-  { icon: "⚙️", title: "Config" },
+  { icon: <FileText className="h-4 w-4" />, title: "Nombre" },
+  { icon: <Palette className="h-4 w-4" />, title: "Tipo y color" },
+  { icon: <Settings className="h-4 w-4" />, title: "Config" },
 ];
 
 const TOOL_TYPES = [
-  { value: "calculator", label: "🧮 Calculadora", desc: "Herramienta de cálculo paso a paso" },
-  { value: "wizard", label: "📝 Wizard", desc: "Asistente interactivo con pasos" },
-  { value: "quiz", label: "❓ Quiz", desc: "Preguntas y respuestas" },
-  { value: "game", label: "🎮 Juego", desc: "Experiencia gamificada" },
-  { value: "app", label: "📱 App", desc: "Aplicación interactiva" },
+  { value: "calculator", label: "Calculadora", desc: "Herramienta de cálculo paso a paso" },
+  { value: "wizard", label: "Wizard", desc: "Asistente interactivo con pasos" },
+  { value: "quiz", label: "Quiz", desc: "Preguntas y respuestas" },
+  { value: "game", label: "Juego", desc: "Experiencia gamificada" },
+  { value: "app", label: "App", desc: "Aplicación interactiva" },
 ];
 
 export default function AdminToolForm() {
