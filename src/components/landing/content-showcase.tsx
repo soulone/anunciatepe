@@ -66,8 +66,8 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
                 subtitle={p.description?.slice(0, 60)}
                 href="/auth/register"
                 progress={progress}
-                raised={Number(p.raised_amount).toLocaleString()}
-                goal={Number(p.goal_amount).toLocaleString()}
+                raised={String(Math.round(p.raised_amount))}
+                goal={String(Math.round(p.goal_amount))}
                 backers={p.backers_count}
                 category={p.category}
               />
