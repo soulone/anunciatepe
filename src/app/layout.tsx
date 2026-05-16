@@ -52,7 +52,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-[#0E0E10] font-body text-white antialiased md:pl-[72px] pb-16 md:pb-0" suppressHydrationWarning>
         {children}
-        <AgentationProvider />
+        {/* <AgentationProvider /> */}
       </body>
     </html>
   );
