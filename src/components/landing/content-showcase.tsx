@@ -25,13 +25,13 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
               Calcula, organiza y decide sin complicaciones.
             </p>
           </div>
-          <Link href="/tools" className="flex items-center gap-1 text-sm font-medium text-[#F26A2E] transition-colors hover:text-[#F26A2E]/80">
+          <Link href="/auth/register" className="flex items-center gap-1 text-sm font-medium text-[#F26A2E] transition-colors hover:text-[#F26A2E]/80">
             Ver todo <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <ScrollRow>
           {tools.map((t: any) => (
-            <PreviewCard key={t.id ?? t.slug} type="tool" title={t.title} subtitle={t.type} href={`/tools/${t.slug}`} />
+            <PreviewCard key={t.id ?? t.slug} type="tool" title={t.title} subtitle={t.type} href="/auth/register" />
           ))}
         </ScrollRow>
       </div>
@@ -51,7 +51,7 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
               Tu aporte, por pequeño que sea, mueve el barrio.
             </p>
           </div>
-          <Link href="/comunidad" className="flex items-center gap-1 text-sm font-medium text-[#C4E27A] transition-colors hover:text-[#C4E27A]/80">
+          <Link href="/auth/register" className="flex items-center gap-1 text-sm font-medium text-[#C4E27A] transition-colors hover:text-[#C4E27A]/80">
             Ver todo <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -64,7 +64,7 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
                 type="project"
                 title={p.title}
                 subtitle={p.description?.slice(0, 60)}
-                href="/comunidad"
+                href="/auth/register"
                 progress={progress}
                 raised={Number(p.raised_amount).toLocaleString()}
                 goal={Number(p.goal_amount).toLocaleString()}
@@ -105,7 +105,7 @@ export function ContentShowcase({ projects, tools }: ContentShowcaseProps) {
             </div>
           </div>
           <Link
-            href="/"
+            href="/auth/register"
             className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-[#F5C53D] px-6 text-sm font-bold text-[#0E0E10] transition-all hover:bg-[#F5C53D]/90 active:scale-[0.97]"
           >
             Conoce el Battle Pass <ArrowRight className="h-4 w-4" />
